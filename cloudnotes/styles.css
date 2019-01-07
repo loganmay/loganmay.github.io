@@ -1,0 +1,277 @@
+html {
+    box-sizing: border-box;
+}
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+body {
+    margin: 0;
+    padding: 0;
+    background-color:#e8e8e8;
+	font-family:monospace;
+}
+h1 {
+    font-size: 4em; 
+}
+h2 {
+    font-size:2.5em;
+}
+h3 {
+    font-size:1.5em; 
+}
+p {
+    font-size:1em;
+}
+#menu-button, #help-button {
+	z-index: 1000;
+}
+#menu-button {
+	position: fixed;
+    top: 0;
+    left: 0;
+    padding: 1em;
+}
+#menu-button:hover {
+	background-color:lightgray;
+	cursor:pointer;
+}
+#help-button {
+	position:fixed;
+	top:0;
+	right:0;
+	font-size: 1.2em;
+	margin:.8em;
+}
+#help-button:hover {
+	cursor:pointer;
+}
+#menu {
+	position:absolute;
+	top:0;
+	left:-250px;
+	width:250px;
+	height:100%;
+	background-color: white;
+	border-right: 1px solid black;
+	padding:1em;
+    padding-top: 90px;
+	z-index: 800;
+	-webkit-transition: all ease-in .2s;
+	-moz-transition: all ease-in .2s;
+	-o-transition: all ease-in .2s;
+	transition: .2s ease-in all;
+}
+#help {
+	width:100%;
+	height:100%;
+	opacity:0;
+	background: rgba(229, 229, 229, 0);
+	z-index: -100;
+}
+#help-content {
+	background-color: #fff;
+	width:50%;
+	padding:3em;
+	margin:50px auto 50px;
+	max-height: 100%;
+	overflow-y: scroll;
+}
+#container {
+/*    text-align: center;*/
+}
+#note-adder, #note-updater {
+    width:496px;
+    margin:auto;
+    background-color: #fff;
+    border: 1px solid rgb(169, 169, 169);
+    font-family:monospace;
+}
+#note-adder {
+    margin-top:32px;
+    margin-bottom:32px;
+}
+#note-title {
+    padding:10px 15px;
+    font-size: 1.2em;
+    font-weight: 600;
+    display:none;
+}
+#note-body {
+    font-size: 1.1em;
+    padding: 12px 15px 15px 15px;
+}
+#note-body:focus, #note-title:focus {
+    outline:none;
+}
+#note-adder .note-button-bar {
+    display:none;
+}
+#note-adder .note-button-bar li {
+    opacity:1;
+}
+.note-button-bar {
+    margin:0;
+    padding:4px 0px;
+}
+.note-button-bar li {
+    list-style-type: none;
+    display: inline-block;
+    margin: 0 8px;
+    color: #888;
+    font-size: 18px;
+    text-align: center;
+    vertical-align: top;
+    height: 32px;
+    width: 32px;
+    opacity: 0;
+}
+.note-button-bar li:hover {
+    cursor: pointer;
+    color:inherit;
+}
+.note-button-bar li i {
+}
+.note-button-bar li i:before {
+    position:relative;
+    top:4px;
+}
+.done-button {
+    float:right;
+    width:auto!important;
+}
+.done-button .done {
+    position:relative;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 5px 14px;
+    font-weight: 500;
+    border-radius:3px;
+    font-size: 16px;
+    color:#444;
+}
+.done-button .done:hover {
+    background-color: rgba(0,0,0,0.08);
+    color: black;
+}
+.body-placeholder::before {
+    content: 'And so, I was thinking...';
+    color: #888;
+}
+.title-placeholder::before {
+    content: 'Title';
+    color: #888;
+}
+#pos-grid {
+	width:1024px;
+    margin:auto;
+	position: relative;
+	z-index: -999;
+}
+#pos-grid .row {
+	
+}
+#pos-grid .cell {
+	width: 256px;
+	height:139px;
+	float:left;
+}
+#notes {
+    margin-top: 16px;
+	width:1024px;
+    margin:auto;
+	position: relative;
+}
+.note {
+    width:240px;
+    min-height:14px; 
+	min-height:123px;
+    border:1px solid #333;
+    margin:16px;
+    margin-top:0px;
+    margin-left:0px;
+    position:absolute;
+    background-color:#fff;
+	word-wrap: break-word;
+}
+.note.first {
+    margin-left:16px;
+}
+.note:hover {
+    cursor: pointer;
+    box-shadow: 1px 1px 1px #333;
+}
+.note .title {
+    font-size: 17px;
+    font-weight:bold;
+    padding: 15px 15px 0 15px;
+    min-height:38px;
+}
+.note .body {
+    padding:12px 15px 15px 15px;
+    min-height:30px;
+}
+.note .body img, #note-updater .body img {
+	max-width:100%;
+}
+#note-updater-wrapper, #help {
+    position: fixed;
+    top:0;
+    left:0;
+    width: 100%;
+    height: 100%;
+    background: rgba(229, 229, 229, 0);
+	z-index: -100;
+}
+#note-updater {
+    position: relative;
+    margin:auto;
+    top: 92px;
+	opacity: 0;
+}
+#note-updater.fullscreen {
+	width: 100%;
+    height: 100%;
+    top: 0;
+}
+#note-updater .expand-button {
+	float: right;
+    padding: .5em;
+    font-size: 14px;
+    color: #888;
+}
+#note-updater.fullscreen .expand-button {
+	font-size:20px;
+}
+#note-updater .expand-button:hover {
+    cursor: pointer;
+	color: inherit;
+}
+#note-updater .title {
+    padding:10px 15px;
+    font-size: 1.2em;
+    font-weight: 600;
+}
+#note-updater .body {
+    font-size: 1.1em;
+    padding: 12px 15px 15px 15px;
+}
+#note-updater .body:focus, #note-updater .title:focus {
+    outline:none;
+}
+#note-updater.fullscreen .body {
+	min-height:50%;
+}
+#note-updater .note-button-bar {
+}
+#note-updater.fullscreen .note-button-bar {
+	position: fixed;
+	bottom: 0;
+}
+#note-updater .note-button-bar li {
+    opacity:1;
+}
+@media screen and (max-width: 800px) {
+	#notes {
+		width:512px;
+	}
+}

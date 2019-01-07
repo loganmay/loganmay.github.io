@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <title>CloudNotes</title>
+    <meta name="description" content="Secure Notetaking">
+    <meta charset="UTF-8">
+    <meta name="author" content="Logan May">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <meta name="viewport" content="initial-scale=1">
+</head>
+<body>
+	<div id="menu-button">
+		<i class="fa fa-bars"></i>
+	</div>
+	<div id="help-button">
+		<i class="fa fa-question"></i>
+	</div>
+	<div id="help">
+		<div id="help-content">
+			<h2>Welcome to CloudNotes</h2>
+			<h4 style="color:red;">Warning</h4>
+			<p>If you clear your cookies, you will loose your data.  That's why it's good to download a backup copy every once in a while.</p>
+			<h4>Data</h4>
+			<p>CloudNotes stores your data in your browser. We choose to make your data private. We do not have any access to your notes. In fact, that data is not even sent through the internet. <strong>It lives on your computer and your computer only.</strong></p>
+			<p>Yes, in that sense, CloudNotes is a misnomer.</p>
+			<h4>This looks a lot like Google Keep</h4>
+			<p>You're right. And, we're happy it does.</p>
+			<h4>Suggesting Improvements</h4>
+			<p>Do you have a nice idea for improving CloudNotes? Just <a href="mailto:loma@sas.upenn.edu">email Logan</a>.</p>
+		</div>
+	</div>
+	<div id="menu">
+		<button id="download-notes">Download Notes</button>
+		<button id="upload-notes">Upload Notes</button>
+   </div>
+    <div id="container">
+        <div id="note-adder">
+            <div id="note-title" class="title-placeholder" contenteditable="true"></div>
+            <div id="note-body" class="body-placeholder" contenteditable="true" >
+           </div>
+           <ul class="note-button-bar">
+               <li class="add-image-button"><i class="fa fa-file-image-o"></i></li>
+               <li class="change-color-button"><i class="fa fa-gear"></i></li>
+               <li class="archive-note-button"><i class="fa fa-archive"></i></li>
+               <li><div class="done">Done</div></li>
+           </ul>
+        </div>
+        <div id="notes">
+<!--
+        <div id="note0" class="note">
+           <div class="title">Title</div>
+           <div class="body">
+               Body
+           </div>
+           <ul class="note-button-bar">
+              <li class="add-image-button"><i class="fa fa-file-image-o"></i></li>
+               <li class="change-color-button"><i class="fa fa-gear"></i></li>
+               <li class="archive-note-button"><i class="fa fa-archive"></i></li>
+           </ul>
+        </div> 
+-->
+        </div>
+        <div id="pos-grid">
+        </div>
+        <div id="note-updater-wrapper">
+            <div id="note-updater">
+               <i class="fa fa-expand expand-button"></i>
+               <div class="title" contenteditable="true"></div>
+               <div class="body" contenteditable="true"></div>
+               <ul class="note-button-bar">
+                   <li class="add-image-button"><i class="fa fa-file-image-o"></i></li>
+                   <li class="change-color-button"><i class="fa fa-gear"></i></li>
+                   <li class="archive-note-button"><i class="fa fa-archive"></i></li>
+                   <li><div class="done">Done</div></li>
+               </ul>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="app.js"></script>
+    <script type="text/javascript" src="displayHelpers.js"></script>
+</body>
+</html>
