@@ -1,0 +1,1835 @@
+<!-- {% extends "layout.html" %}
+{% set active_page = 'speakertracking' %}
+{% block content %} -->
+<html>
+<head>
+<link rel="icon" href="crest.png">
+<link href="https://fonts.googleapis.com/css?family=Marcellus" rel="stylesheet">
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+<style>
+  html, body {
+  	padding: 0;
+  	margin: 0;
+  	box-sizing: border-box;
+  	overflow: hidden;
+  }
+	header {
+		text-align: center;
+		display:flex;
+		justify-content: center;
+		padding: 1em 0 0em 0;
+    font-family: 'Marcellus', serif;
+    color: #FFFFFF;
+    background-color: rgb(6, 25, 77);
+    position: fixed;
+	}
+	header h1 {
+		font-size: 2em;
+		text-shadow: 0px 0px 16px #08377A;
+		margin-left: .5em;
+	}
+	header #header-content-wrapper {
+		margin: auto;
+	}
+	header #header-image {
+		height: 100px;
+		width: 100px;
+		background: url('crest.png');
+		background-size: contain;
+		background-repeat: no-repeat;
+	}
+	#app-wrapper {
+		width: 100%;
+		overflow: hidden;
+		display:flex;
+	}
+	#sidebar {
+		float:left;
+		padding:1em;
+		padding-right:0;
+		flex: 1;
+		background-color: #e7edfd;
+		border-right: 2px solid rgb(6, 25, 77);
+	}
+	#sidebar h3 {
+		font-family: 'Marcellus', serif;
+	}
+	#delegates-list {
+		overflow-y: auto;
+	}
+	#delegates-list li {
+		text-transform: capitalize;
+	}
+	.absent {
+		opacity: 0.5;
+	}
+	.shadow {
+	  -moz-box-shadow:    1px 0px 11px 0px #000;;
+	  -webkit-box-shadow: 1px 0px 11px 0px #000;;
+	  box-shadow:         1px 0px 11px 0px #000;;
+		position:relative;
+    z-index:10;
+	}
+	.upmunc-button {
+		color: white;
+    border: 2px solid white;
+    border-radius: 5px;
+    padding: 5px 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+	}
+	.upmunc-button:hover {
+		background-color: rgb(133, 0, 20);
+		cursor: pointer;
+	}
+	#edit-delegates-menu {
+		display:none;
+	}
+	#timer {
+		display:flex;
+		flex-direction: column;
+		padding:1em;
+		padding-bottom: 30px;
+		flex-grow: 1;
+		flex: 3;
+		background-color: rgb(133, 0, 20);
+		/*padding:1em;*/
+		color:white;
+	}
+	.time-left {
+	  font-weight: 100;
+	  font-size: 10rem;
+	  margin: 0;
+	  color:white;
+	  text-shadow:4px 4px 0 rgba(0,0,0,0.05);
+	  text-align: center;
+	  position: relative;
+	}
+	#timer-menu {
+		display:flex;
+		justify-content: center;
+	}
+	#set-timer-input {
+		font-size: 20px;
+		padding: 5px;
+	}
+	#set-timer-button {
+		z-index: 2;
+	}
+	#set-timer-button, #play-pause, #set-caucus-time {
+		background: rgb(6, 25, 77);
+    color: white;
+    border: 0px;
+    font-size: 20px;
+    padding: 15px;
+    font-family: 'Marcellus', serif;
+    font-weight: 1000;
+    transition: all .3s;
+	}
+	#set-timer-button:hover, #play-pause:hover, #set-caucus-time:hover {
+		cursor: pointer;
+		background: rgb(29,55,128);
+	}
+	#set-caucus-time {
+		font-size: 18px;
+    padding: 8px;
+	}
+	#play-pause {
+		border-left: 2px solid rgb(165,175,202);
+		position: relative;
+	}
+	#timer-menu {
+		margin-top:25px;
+	}
+	.remove-speaker {
+		padding: 5px;
+	}
+	.remove-speaker:hover {
+		cursor: pointer;
+	}
+	.current-speaker {
+	  font-size: 3rem;
+	  font-style: italic;
+	  text-transform: capitalize;
+	}
+	#speakers-list {
+		position:absolute;
+		background: red;
+		transition: left .5s;
+		background: rgb(209, 96, 113);
+		color: white;
+		padding-left: 1em;
+		z-index: 3;
+		display: flex;
+		flex-direction: column;
+	}
+	#speakers-list h1 {
+		font-family: 'Marcellus', serif;
+	}
+	#speakers {
+		overflow-y: auto;
+		position:absolute;
+		padding-bottom: 5px;
+	}
+	#speakers li {
+		text-transform: capitalize;
+	}
+	#add-speakers-menu {
+		display:flex;
+	}
+	#add-speakers-button {
+
+	}
+	#add-speakers-button:hover {
+		cursor:pointer;
+	}
+  .suggestions {
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    color:black;
+    width:123px;
+    /*perspective:20px;*/
+  }
+  .suggestions li {
+    background:white;
+    list-style: none;
+    border-bottom: 1px solid #D8D8D8;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.14);
+    margin:0;
+    padding:20px;
+    transition: all 0.3s;
+    display:flex;
+    justify-content:space-between;
+    text-transform: capitalize;
+  }
+
+  .suggestions li:hover {
+  	cursor:pointer;;
+  	background: rgb(6, 25, 77)!important;
+  	color: white;
+  }
+
+  .suggestions li:nth-child(even) {
+    transform: perspective(100px) rotateX(3deg) translateY(2px) scale(1.001);
+    background: linear-gradient(to bottom,  #ffffff 0%,#EFEFEF 100%);
+  }
+  .suggestions li:nth-child(odd) {
+    transform: perspective(100px) rotateX(-3deg) translateY(3px);
+    background: linear-gradient(to top,  #ffffff 0%,#EFEFEF 100%);
+  }
+  #hide-speakers-list {
+  	padding: 1em;
+    position: absolute;
+    display: block;
+    left: 335px;
+    transition: all .3s;
+  }
+  #hide-speakers-list:hover {
+  	cursor: pointer;
+		color: rgb(6, 25, 77)
+  }
+  #next-speaker {
+  	margin-left:5px;
+  	font-family: 'Marcellus', serif;
+  }
+  #next-speaker i {
+  	margin-left: 10px;
+  	position: relative;
+  	top: 1px;
+  	font-weight: 100;
+  }
+  #remove-speakers {
+  	margin-left:10px;
+  }
+  #committee-stats {
+  	text-align: left;
+  	position: absolute;
+  	bottom: 0;
+  	margin-bottom: 10px;
+  	transition: all .3s;
+  	bottom: -139px;
+  }
+  #committee-stats ul {
+  	margin: 0;
+  	padding: 0;
+  }
+  #committee-stats ul li {
+  	display: block;
+  }
+  .remove-speaker-button {
+  	display:none;
+  	margin-left: 5px;
+  }
+  .remove-speaker-button.upmunc-button {
+  	margin-left: 5px;
+    border: 0;
+    padding: 0px 4px;
+  }
+/*  #show-speakers-list {
+  	background: rgb(209, 96, 113);
+  }
+  #show-speakers-list:hover {
+  	background: rgb(133, 0, 20);
+  }*/
+  #caucus-time {
+  	position: fixed;
+  	right:0;
+  	bottom:0;
+  	transition: all 0.3s
+  }
+  .rollButton {
+  	border:0;
+  	background: transparent;
+  }
+  .rollButton:hover {
+  	cursor: pointer;
+  }
+  .rollButton[present="false"] i {
+  	color: rgb(133, 0, 20);
+  	font-size: 18px;
+  }
+  .rollButton[present="true"] i {
+  	color: green;
+  	font-size: 22px;
+  }
+</style>
+</head>
+<body>
+<header class="shadow">
+		<div id="header-image"></div>
+		<h1>UPMUNC 51 Speaker Tracker</h1>
+</header>
+<div id="speakers-list">
+	<i class="fa fa-times" id="hide-speakers-list"></i>
+	<h1>Speakers List</h1>
+	<div id="add-speakers-menu">
+		<input type="text" id="add-speakers-input" placeholder="Add A Speaker">
+<!--		<button id="add-speakers-button">+</button> -->
+<!--		<button id="remove-speakers" class="upmunc-button"><i class="fa fa-times"></i></button> -->
+		<button id="next-speaker" class="upmunc-button">Next Speaker <i class="fa fa-caret-square-o-right"></i></button>
+	</div>
+	<ol id="speakers"></ol>
+	<ul class="suggestions">
+	</ul>
+</div>
+<div id="app-wrapper">
+	<div id="sidebar">
+		<div id="edit-delegates-menu" style="padding:1em;">
+			<input type="text" id="delegate-input">
+			<button class="upmunc-button" id="add-delegate">Add Delegate</button>
+			<button class="upmunc-button" id="remove-delegates">Remove Delegates</button>
+			<button class="upmunc-button" id="clear-delegates">Clear All Delegates</button>
+			<input type="file" name="File Upload" id="csv-file-upload" accept=".csv" style="margin-top:10px;"/>
+		</div>
+		<div id="sidebar-buttons">
+			<button class="upmunc-button" id="edit-delegates"><i class="fa fa-edit" style="margin-right:5px;"></i>Edit Delegates List</button>
+			<button class="upmunc-button" id="roll-call"><i class="fa fa-user-times" style="margin-right:5px;"></i>Start Roll Call</button>
+ 			<button class="upmunc-button" id="hide-absent"><i class="fa fa-eye-slash" style="margin-right:5px;"></i>Hide Absent Delegates</button>
+			<button class="upmunc-button" id="show-speakers-list"><i class="fa fa-group" style="margin-right:5px;"></i>Speakers List</button>
+		</div>
+		<h3 class="sidebar-title">Delegates List</h3>
+		<ul id="delegates-list">
+		</ul>
+	</div>
+	<div id="timer">
+		<h1 class="time-left">0:00</h1>
+		<div id="timer-menu">
+			<input type="text" placeholder="# of Seconds" id="set-timer-input">
+			<button id="set-timer-button">Start Timer</button>
+			<button id="play-pause"><i class="fa fa-pause"></i></button>
+		</div>
+		<h1 class="current-speaker" style="text-align: center;"><em>---</em></h1>
+		<div id="committee-stats">
+			<i class="fa fa-info-circle" style="font-size: 30px; margin-bottom: 5px;"></i>
+			<ul>
+				<li name="total">Total: <span class="stat"></span></li>
+				<li name="present">Present: <span class="stat"></span></li>
+				<li name="quorum">Quorum: <span class="stat"></span></li>
+				<li name="simple-majority">Majority: <span class="stat"></span></li>
+				<li name="two-thirds-majority">2/3 Majority: <span class="stat"></span></li>
+				<li name="twenty-percent">Twenty Percent: <span class="stat"></span></li>
+				<li name="ten-percent">Ten Percent: <span class="stat"></span></li>
+			</ul>
+<!-- 			<button class="upmunc-button">Tally</button>
+			<button class="upmunc-button">Clear</button> -->
+		</div>
+	<div id="caucus-time" style="padding:1em; display:flex;flex-direction: column; bottom: -79px;">
+		<h3 style="margin: 0; font-size: 50px; text-align: center;margin-left:100px">0:00</h3>
+		<div style="display:flex;">
+			<input type="text" placeholder="minutes : seconds">
+			<button id="set-caucus-time">Set Time</button>
+		</div>
+		<div style="display:flex;margin-top:5px;">
+			<input type="checkbox" id="accelerated-caucus" value="false"><label>Accelerated caucus</label>
+		</div>
+	</div>
+	</div>
+	<a download="speakerData.txt" id="downloader" style="display:none;"></a>
+</div>
+
+
+<script>
+
+/*
+TODO:
+
+But you're not timing any delegates? (don't allow them to start timer without current speaker or they could screw up caucus time)
+warning for when load on safari
+warning for if not local storage
+how to submit / view data after conference (basic node server prob on heroku needed)
+
+NOTES ----------------------------------------------
+
+- how many times they spoke this session
+- how many times they've spoken total
+- running list where you can tally when a person spoke
+- color coding the often speakers so people can easily see who hasn't spoken very much
+- no hover on the committee stats
+- alphabetize delegates
+
+*/
+// (function() {
+
+// Data
+
+const countries = [
+"Afghanistan",
+"Aland Islands",
+"Albania",
+"Algeria",
+"American Samoa",
+"Andorra",
+"Angola",
+"Anguilla",
+"Antarctica",
+"Antigua And Barbuda",
+"Argentina",
+"Armenia",
+"Aruba",
+"Australia",
+"Austria",
+"Azerbaijan",
+"Bahamas",
+"Bahrain",
+"Bangladesh",
+"Barbados",
+"Belarus",
+"Belgium",
+"Belize",
+"Benin",
+"Bermuda",
+"Bhutan",
+"Bolivia",
+"Bosnia And Herzegovina",
+"Botswana",
+"Bouvet Island",
+"Brazil",
+"British Indian Ocean Territory",
+"Brunei Darussalam",
+"Bulgaria",
+"Burkina Faso",
+"Burundi",
+"Cambodia",
+"Cameroon",
+"Canada",
+"Cape Verde",
+"Cayman Islands",
+"Central African Republic",
+"Chad",
+"Chile",
+"China",
+"Christmas Island",
+"Cocos (Keeling) Islands",
+"Colombia",
+"Comoros",
+"Congo",
+"DR Congo",
+"Democratic Republic of the Congo",
+"Cook Islands",
+"Costa Rica",
+"Cote D'Ivoire",
+"Croatia",
+"Cuba",
+"Cyprus",
+"Czech Republic",
+"Denmark",
+"Djibouti",
+"Dominica",
+"Dominican Republic",
+"Ecuador",
+"Egypt",
+"El Salvador",
+"Equatorial Guinea",
+"Eritrea",
+"Estonia",
+"Ethiopia",
+"Falkland Islands (Malvinas)",
+"Faroe Islands",
+"Fiji",
+"Finland",
+"France",
+"French Guiana",
+"French Polynesia",
+"French Southern Territories",
+"Gabon",
+"Gambia",
+"Georgia",
+"Germany",
+"Ghana",
+"Gibraltar",
+"Greece",
+"Greenland",
+"Grenada",
+"Guadeloupe",
+"Guam",
+"Guatemala",
+"Guernsey",
+"Guinea",
+"Guinea-Bissau",
+"Guyana",
+"Haiti",
+"Heard Island And Mcdonald Islands",
+"Holy See (Vatican City State)",
+"Honduras",
+"Hong Kong",
+"Hungary",
+"Iceland",
+"India",
+"Indonesia",
+"Iran",
+"Iraq",
+"Ireland",
+"Isle Of Man",
+"Israel",
+"Italy",
+"Jamaica",
+"Japan",
+"Jersey",
+"Jordan",
+"Kazakhstan",
+"Kenya",
+"Kiribati",
+"South Korea",
+"North Korea",
+"Korea",
+"Kuwait",
+"Kyrgyzstan",
+"Lao People's Democratic Republic",
+"Latvia",
+"Lebanon",
+"Lesotho",
+"Liberia",
+"Libyan Arab Jamahiriya",
+"Liechtenstein",
+"Lithuania",
+"Luxembourg",
+"Macao",
+"Macedonia, The Former Yugoslav Republic Of",
+"Madagascar",
+"Malawi",
+"Malaysia",
+"Maldives",
+"Mali",
+"Malta",
+"Marshall Islands",
+"Martinique",
+"Mauritania",
+"Mauritius",
+"Mayotte",
+"Mexico",
+"Micronesia, Federated States Of",
+"Moldova, Republic Of",
+"Monaco",
+"Mongolia",
+"Montserrat",
+"Morocco",
+"Mozambique",
+"Myanmar",
+"Namibia",
+"Nauru",
+"Nepal",
+"Netherlands",
+"Netherlands Antilles",
+"New Caledonia",
+"New Zealand",
+"Nicaragua",
+"Niger",
+"Nigeria",
+"Niue",
+"Norfolk Island",
+"Northern Mariana Islands",
+"Norway",
+"Oman",
+"Pakistan",
+"Palau",
+"Palestinian Territory, Occupied",
+"Panama",
+"Papua New Guinea",
+"Paraguay",
+"Peru",
+"Philippines",
+"Pitcairn",
+"Poland",
+"Portugal",
+"Puerto Rico",
+"Qatar",
+"Reunion",
+"Romania",
+"Russia",
+"Rwanda",
+"Saint Helena",
+"Saint Kitts And Nevis",
+"Saint Lucia",
+"Saint Pierre And Miquelon",
+"Saint Vincent And The Grenadines",
+"Samoa",
+"San Marino",
+"Sao Tome And Principe",
+"Saudi Arabia",
+"Senegal",
+"Serbia And Montenegro",
+"Seychelles",
+"Sierra Leone",
+"Singapore",
+"Slovakia",
+"Slovenia",
+"Solomon Islands",
+"Somalia",
+"South Africa",
+"South Georgia And The South Sandwich Islands",
+"Spain",
+"Sri Lanka",
+"Sudan",
+"Suriname",
+"Svalbard And Jan Mayen",
+"Swaziland",
+"Sweden",
+"Switzerland",
+"Syria",
+"Taiwan, Province Of China",
+"Tajikistan",
+"Tanzania, United Republic Of",
+"Thailand",
+"Timor-Leste",
+"Togo",
+"Tokelau",
+"Tonga",
+"Trinidad And Tobago",
+"Tunisia",
+"Turkey",
+"Turkmenistan",
+"Turks And Caicos Islands",
+"Tuvalu",
+"Uganda",
+"Ukraine",
+"United Arab Emirates",
+"United Kingdom",
+"United States",
+"United States Minor Outlying Islands",
+"Uruguay",
+"Uzbekistan",
+"Vanuatu",
+"Venezuela",
+"Viet Nam",
+"Virgin Islands, British",
+"Virgin Islands, U.S.",
+"Wallis And Futuna",
+"Western Sahara",
+"Yemen",
+"Zambia",
+"Zimbabwe"];
+
+/*
+* RESET AND START OVER
+*
+*/
+
+function reset() {
+	releaseDataBind();
+	resetData();
+	localStorage.clear();
+}
+
+/*
+*
+* ELEMENTS NEEDED FOR INIT
+*
+*/
+	const timerDisplay = document.querySelector('.time-left');
+	const setTimerButton = document.querySelector('#set-timer-button');
+	const playPause = document.querySelector('#play-pause');
+
+	const nextSpeakerButton = document.querySelector('#next-speaker');
+	const currentSpeaker = document.querySelector('.current-speaker');
+
+	const Delegates = document.querySelector('#delegates-list');
+
+	const speakers = document.querySelector('#speakers');
+
+	const hideAbsentButton = document.querySelector('#hide-absent');
+
+	const committeeStats = document.querySelector('#committee-stats');
+	const committeeStatsList = document.querySelector('#committee-stats ul');
+
+	const rollCallButton = document.querySelector("#roll-call");
+	const caucusTime = document.querySelector('#caucus-time');
+	const caucusDisplay = caucusTime.querySelector('h3');
+
+	const hideSpeakersListButton = document.querySelector('#hide-speakers-list');
+
+	/*
+	*
+	* INIT
+	*
+	*/
+
+	// Initialize model
+	var speakerData;
+	var appData;
+	let countdown;
+
+	if (window.localStorage.appData && window.localStorage.speakerData) {
+		loadData();
+	} else {
+		resetData();
+
+		// Fill model with countries list by default
+		countries.forEach(function(country) {
+			modelPut(country.toLowerCase());
+		});
+
+		// Fill delegates list with countries by default
+		countries.forEach(function(country) {
+			let c = createDelegateListElement(country);
+			Delegates.appendChild(c);
+		});
+
+		// Hide PlayPause
+		hidePlayPause();
+	}
+
+	// update stat counts
+	updateCommitteeStats();
+	// hideCommitteeStats(); just using CSS for now
+
+  /*
+	*
+	* MODEL API
+	*
+	*/
+
+	function modelPut(val) {
+		speakerData[val] = {
+			name: val,
+			timesMadeRoll: 0,
+			present: true,
+			timesSpoke: 0,
+			secondsSpoke: 0,
+			onSpeakersList: false,
+			speakersListPosition: 0
+		}
+	}
+
+	function modelRemove(val) {
+		if (speakerData[val]) {
+			delete speakerData[val];
+		}
+	}
+
+	function modelClear() {
+		speakerData = {};
+	}
+
+	/*
+	*
+	* SAVE AND LOAD DATA
+	*
+	*/
+
+	// Save Data
+	function saveData() {
+		appData.editingDelegates = false;
+		appData.inRollCall = false;
+		window.localStorage.appData = JSON.stringify(appData);
+		window.localStorage.speakerData = JSON.stringify(speakerData);
+	}
+
+	window.onbeforeunload = saveData;
+
+	// Load Data
+	function loadData() {
+
+		appData = JSON.parse(window.localStorage.appData);
+		speakerData = JSON.parse(window.localStorage.speakerData);
+
+		console.log('Data loaded from local storage');
+
+		let speakersListArray = [];
+
+		for (key in speakerData) {
+			if (speakerData.hasOwnProperty(key)) {
+				let c = createDelegateListElement(key);
+				console.log(c)
+				Delegates.appendChild(c);
+				if (speakerData[key].onSpeakersList) speakersListArray.push(key);
+			}
+		}
+
+		let currentSpeakerIndex = 1;
+
+		while (currentSpeakerIndex <= speakersListArray.length) {
+			for (var i = 0; i < speakersListArray.length; i++) {
+				const name = speakersListArray[i];
+				if (speakerData[name].speakersListPosition === currentSpeakerIndex) {
+					console.log(name);
+					renderSpeaker(name);
+					currentSpeakerIndex++;
+				}
+			}
+		}
+
+
+		if (appData.inRollCall) {
+			beginRollCall();
+		} else {
+			for (key in speakerData) {
+				if (speakerData.hasOwnProperty(key) && speakerData[key].present) {
+					let del = Delegates.querySelector('[name="' + key + '"]');
+					del.querySelector('.rollButton').setAttribute('present', 'true');
+				} else if (speakerData.hasOwnProperty(key) && !speakerData[key].present)  {
+					let del = Delegates.querySelector('[name="' + key + '"]');
+					addClass(del, 'absent');
+					del.querySelector('.rollButton').setAttribute('present', 'false');
+				}
+			}
+		}
+
+		if (appData.currentSpeaker) {
+			const name = appData.currentSpeaker.name
+			appData.currentSpeaker = speakerData[name];
+			currentSpeaker.textContent = name;
+		}
+
+		if (appData.secondsLeft > 0) {
+			timer(appData.secondsLeft);
+			pauseTimer();
+			playPause.style.left = '0px';
+		} else {
+			hidePlayPause();
+		}
+
+		if (appData.caucusTime > 0) {
+			displayCaucusTimeLeft(appData.caucusTime);
+		}
+
+		if(!appData.showingAbsent) {
+			hideAbsentButton.innerHTML = '<i class="fa fa-eye" style="margin-right:5px;"></i>Show Absent Delegates';
+			hideAbsentDelegates();
+		}
+
+		if (appData.acceleratedCaucus) {
+			const checked = document.querySelector('#caucus-time').querySelector('input[type="checkbox"');
+			checked.setAttribute("checked", "checked");
+			checked.setAttribute("value", "true");
+		}
+
+	}
+
+	function resetData() {
+		speakerData = {};
+		appData = {
+			inRollCall: false,
+			removingDelegates: false,
+			editingDelegates: false,
+			removingSpeakers: false,
+			showingAbsent: true,
+			timerRunning: false,
+			currentSpeaker: null,
+			secondsLeft: 0,
+			caucusTime: 0,
+			acceleratedCaucus: false
+		}
+	}
+
+	function releaseDataBind() {
+		window.onbeforeunload = null;
+	}
+
+	/*
+	*
+	* UI CONSTRUCTION
+	*
+	*/
+
+	// Set Element Heights -----------------------------------------------------
+
+	function autoResizeBody() {
+		document.querySelector('body').style.height = window.innerHeight +'px';
+	}
+	function autoResizeSidebar() {
+		let header = document.querySelector('header');
+		let sb = document.querySelector('#sidebar');
+		sb.style.height = (window.innerHeight - getAbsoluteHeight(header)) + 'px';
+	}
+	function autoResizeDelegatesList() {
+		let sb = document.querySelector('#sidebar');
+		let sbHeight = parseInt(sb.style.height.slice(0,-2));
+		let clHeight = sbHeight 
+			- getAbsoluteHeight(document.querySelector('#sidebar-buttons'))
+			- getAbsoluteHeight(document.querySelector('.sidebar-title'))
+			- getAbsoluteHeight(document.querySelector('#edit-delegates-menu'));
+
+		document.querySelector("#delegates-list").style.height = clHeight - 25 + 'px'; // TODO: why this 25? (padding is the likely answer)
+	}
+	function autoResizeSpeakers() {
+		let sl = document.querySelector('#speakers-list');
+		let slHeight = parseInt(sl.style.height.slice(0,-2));
+		let spHeight = slHeight 
+			- getAbsoluteHeight(sl.querySelector('h1'))
+			- getAbsoluteHeight(sl.querySelector('#add-speakers-menu'))
+
+		const speakers = document.querySelector("#speakers")
+		speakers.style.height = spHeight - 18 + 'px';
+		speakers.style.width = sl.getBoundingClientRect().width - 56 + 'px';
+
+	}
+	window.onresize = autoResizeBody;
+	window.onresize = autoResizeSidebar;
+	window.onresize = autoResizeDelegatesList;
+	window.onresize = autoResizeSpeakersList;
+	window.onresize = autoResizeSuggestions;
+	window.onresize = autoRepositionSpeakers;
+	window.onresize = autoPositionSuggestions;
+	window.onresize = autoResizeSpeakers;
+	window.onresize = autoPositionHideSpeakersListButton;
+
+	autoResizeBody();
+	autoResizeSidebar();
+	autoResizeDelegatesList();
+	autoResizeSpeakersList();
+	autoResizeSuggestions();
+	autoRepositionSpeakers();
+	autoPositionSuggestions();
+	autoResizeSpeakers();
+	autoPositionHideSpeakersListButton();
+
+	function autoResizeSpeakersList() {
+		const speakersList = document.querySelector('#speakers-list');
+		const styles = window.getComputedStyle(document.querySelector('#sidebar'));
+		const slPadding = parseInt(window.getComputedStyle(speakersList).paddingLeft.slice(0,-2));
+		const width = parseInt(styles.width.slice(0,-2)) + 17 - slPadding;     // 17 = scrollbar width
+		speakersList.style.width = width + "px";
+		speakersList.style.height = styles.height;
+		speakersList.style.left = -(width + slPadding) + "px";
+	}
+
+	function autoResizeSuggestions() {
+		const width = document.querySelector('#add-speakers-input').getBoundingClientRect().width;
+		document.querySelector('.suggestions').style.width = width + 'px';
+	}
+
+	function autoRepositionSpeakers() {
+		let speakersList = document.querySelector('#speakers-list');
+		speakersList.querySelector('#speakers').style.top = 
+			getAbsoluteHeight(speakersList.querySelector('h1')) +
+			getAbsoluteHeight(speakersList.querySelector('#add-speakers-menu'));			
+	}
+
+	function hidePlayPause() {
+		const playPause = document.querySelector('#play-pause');
+		console.log(playPause)
+		playPause.style.left = -getAbsoluteWidth(playPause);
+	}
+
+	function autoPositionSuggestions() {
+		let speakersList = document.querySelector('#speakers-list');
+		document.querySelector('.suggestions').style.top = 
+				getAbsoluteHeight(speakersList.querySelector('h1')) +
+				getAbsoluteHeight(speakersList.querySelector('#add-speakers-menu'));
+	}
+
+	function autoPositionHideSpeakersListButton() {
+		let speakersList = document.querySelector('#speakers-list');
+		const width = getAbsoluteWidth(speakersList);
+		speakersList.querySelector('i').left = (width/2 + 5) + 'px';
+	}
+
+	/*
+	*
+	* ROLL CALL
+	*
+	*/
+
+	// Begin Roll call
+
+	const editDelegatesButton = document.querySelector('#edit-delegates');
+
+	function beginRollCall() {
+
+		const conf = window.confirm("Are you sure you want to begin a new roll call? This will clear your previous roll.")
+		if (!conf) return;
+
+		if (appData.editingDelegates) {
+			hideEditDelegates(editDelegatesButton);
+			updateCommitteeStats();
+			appData.editingDelegates = !appData.editingDelegates;
+		}
+
+		for (var i = 0; i < Delegates.children.length; i++) {
+
+			rollCallButton.innerHTML = '<i class="fa fa-send" style="margin-right:5px;"></i>Submit Roll';
+
+			let child = Delegates.children[i];
+			let delegateName = child.querySelector('.delegateName').textContent.toLowerCase();
+			removeClass(child, 'absent');
+			speakerData[delegateName].present = true;
+
+			let button = child.querySelector('.rollButton')
+			button.style.display = 'inline';
+			button.innerHTML = '<i class="fa fa-check-square-o"></i>';
+			button.setAttribute("present", "true");
+		}
+	}
+
+	// End Roll Call
+
+	function endRollCall() {
+
+		rollCallButton.innerHTML = '<i class="fa fa-user-times" style="margin-right:5px;"></i>Start Roll Call';
+
+		for (var i = 0; i < Delegates.children.length; i++) {
+
+			let child = Delegates.children[i];
+			let button = child.querySelector('.rollButton');
+			let delegateName = child.querySelector('.delegateName').textContent.toLowerCase();
+
+			if (button.getAttribute('present') === "false") {
+				addClass(child, 'absent');
+				speakerData[delegateName].present = false;
+			} else {
+				removeClass(child, 'absent');
+				let speaker = speakerData[delegateName];
+				speaker.present = true;
+				speaker.timesMadeRoll = speaker.timesMadeRoll + 1; 	
+			}
+
+			button.style.display = 'none';
+
+			if(!appData.showingAbsent) hideAbsentDelegates();
+
+			updateCommitteeStats();
+
+		};
+	}
+
+	rollCallButton.addEventListener('click', function() {
+		(appData.inRollCall) ? endRollCall() : beginRollCall();
+		appData.inRollCall = !appData.inRollCall;
+	});
+
+
+	/*
+	*
+	* DELEGATES LIST UI
+	*
+	*/
+
+	// Edit delegates list
+
+	function editDelegatesEventHandler(e) {
+		appData.editingDelegates = !appData.editingDelegates;
+		console.log(appData.editingDelegates);
+		if (appData.editingDelegates) {
+			showEditDelegates(this);
+		} else {
+			hideEditDelegates(this);
+			updateCommitteeStats();
+		}
+
+		autoResizeDelegatesList();
+
+	}
+
+	function hideEditDelegates(_this) {
+			_this.innerHTML = '<i class="fa fa-edit" style="margin-right:5px;"></i>Edit Delegates List';
+			document.querySelector('#edit-delegates-menu').style.display = 'none';
+	}
+
+	function showEditDelegates(_this) {
+			_this.innerHTML = '<i class="fa fa-window-close" style="margin-right: 5px"></i>Stop Editing Delegates';
+			document.querySelector('#edit-delegates-menu').style.display = 'block';
+	}
+
+	editDelegatesButton.addEventListener('click', editDelegatesEventHandler);
+
+	// Hide Absent Delegates const
+
+	function hideAbsentEventHandler() {
+		appData.showingAbsent = !appData.showingAbsent;
+
+		if (appData.showingAbsent) {
+			this.innerHTML = '<i class="fa fa-eye-slash" style="margin-right:5px;"></i>Hide Absent Delegates';
+			showAbsentDelegates();
+		} else {
+			this.innerHTML = '<i class="fa fa-eye" style="margin-right:5px;"></i>Show Absent Delegates';;
+			hideAbsentDelegates();
+		}
+	}
+
+	function showAbsentDelegates() {
+		for (var i = 0; i < Delegates.children.length; i++) {
+			if (Delegates.children[i].querySelector('.rollButton').getAttribute('present') === 'false') {
+				Delegates.children[i].style.display = 'list-item';
+			}
+		}
+	}
+
+	function hideAbsentDelegates() {
+		for (var i = 0; i < Delegates.children.length; i++) {
+			if (Delegates.children[i].querySelector('.rollButton').getAttribute('present') === 'false') {
+				Delegates.children[i].style.display = 'none';
+			}
+		}
+	}
+
+	hideAbsentButton.addEventListener('click', hideAbsentEventHandler);
+
+	/*
+	*
+	* DELEGATES LIST API
+	*
+	*/
+
+	function addDelegate(val) {
+		val = val.toLowerCase();
+		modelPut(val);
+		Delegates.appendChild(createDelegateListElement(val));
+	}
+
+	function addDelegateEventHandler(e) {
+		let input = document.querySelector('#delegate-input');
+		let delName = input.value;
+		if (delName !== "") addDelegate(delName);
+		input.value = "";
+	}
+
+	document.querySelector('#add-delegate').addEventListener('click', addDelegateEventHandler);
+	document.querySelector('#delegate-input').addEventListener('keypress', function(e) {
+		if (e.ctrlKey && e.code === "Enter") {
+			addDelegateEventHandler(e);
+		}
+	});
+
+	function removeDelegate(val) {
+		for (var i = 0; i < Delegates.children.length; i++) {
+			if (Delegates.children[i].getAttribute("name") === val) {
+				Delegates.removeChild(Delegates.children[i]);
+				modelRemove(val);
+				return;
+			}
+		}
+	}
+
+	function removeDelegatesEventHandler(e) {
+		appData.removingDelegates = !appData.removingDelegates;
+
+		if (appData.removingDelegates) {
+			this.textContent = "Stop Removing Delegates";
+			for (var i = 0; i < Delegates.children.length; i++) {
+				Delegates.children[i].querySelector('.removeDelButton').style.display = "inline";
+			}
+		} else {
+			this.textContent = "Remove Delegates";
+			for (var i = 0; i < Delegates.children.length; i++) {
+				Delegates.children[i].querySelector('.removeDelButton').style.display = "none";
+			}
+		}
+
+	}
+
+	document.querySelector('#remove-delegates').addEventListener('click', removeDelegatesEventHandler);
+
+
+	function clearDelegates() {
+		modelClear();
+		while (Delegates.children.length !== 0) {
+			for (var i = 0; i < Delegates.children.length; i++) {
+				Delegates.removeChild(Delegates.children[i]);
+			}
+		}
+	}
+
+	document.querySelector('#clear-delegates').addEventListener('click', function(e) {
+		const confirmed = window.confirm("HOLD UP! Are you sure you want to delete all of the delegates from the list?");
+		if (confirmed) clearDelegates();
+	});
+
+
+	function createDelegateListElement(val) {
+
+		let d = document.createElement("li");
+		d.setAttribute("name", val.toLowerCase());
+		
+		let s = document.createElement("span");
+		addClass(s, 'delegateName');
+		s.textContent = val;
+
+		let b = document.createElement("button");
+		addClass(b, "rollButton");
+		b.setAttribute("name", val);
+		b.setAttribute("present", "true");
+		b.textContent = "Absent";
+		b.style.display = 'none';
+		b.addEventListener('click', function(e) {
+			if (this.getAttribute('present') === 'false') {
+				this.setAttribute("present", "true");
+				this.innerHTML = '<i class="fa fa-check-square-o"></i>';
+			} else {
+				this.setAttribute("present", "false");
+				this.innerHTML = '<i class="fa fa-square-o"></i>';
+			}
+		})
+
+		let b2 = document.createElement("button");
+		addClass(b2, "removeDelButton");
+		b2.setAttribute("name", val);
+		b2.textContent = "x";
+		b2.style.display = "none";
+		b2.addEventListener('click', function() {
+			removeDelegate(this.getAttribute("name"));
+		});
+
+		d.appendChild(s);
+		d.appendChild(b);
+		d.appendChild(b2);
+
+		return d;
+	}
+
+	/*
+	*
+	* TIMER
+	* 
+	*/
+
+	function timer(seconds) {
+  // clear any existing timers
+  clearInterval(countdown);
+  appData.timerRunning = true;
+  setTimerButton.textContent = "Restart Timer";
+  playPause.innerHTML = '<i class="fa fa-pause"></i>';
+  playPause.style.left = '0px';
+
+  const now = Date.now();
+  const then = now + seconds * 1000;
+  displayTimeLeft(seconds);
+
+  // accelerated caucus
+  if (appData.acceleratedCaucus) {
+  	if (appData.caucusTime - seconds >= 0) appData.caucusTime = appData.caucusTime - seconds;
+  	else appData.caucusTime = 0;
+	  displayCaucusTimeLeft(appData.caucusTime); 
+	}
+
+  countdown = setInterval(() => {
+    const secondsLeft = Math.round((then - Date.now()) / 1000);
+    appData.secondsLeft = secondsLeft;
+    // check if we should stop it!
+    if (secondsLeft < 0) {
+      clearInterval(countdown);
+      appData.secondsLeft = 0;
+      appData.timerRunning = false;
+      playPause.style.left = -getAbsoluteWidth(playPause); 
+      setTimerButton.textContent = "Start Timer";
+    	shake();
+      return;
+    }
+    // updates speaker's data
+    if (appData.currentSpeaker) appData.currentSpeaker.secondsSpoke = appData.currentSpeaker.secondsSpoke + 1; 
+    // display it
+    displayTimeLeft(secondsLeft);
+    // caucus time
+    if (!appData.acceleratedCaucus) {
+	    if (appData.caucusTime - 1 >= 0) displayCaucusTimeLeft(--appData.caucusTime);
+	    else displayCaucusTimeLeft(0);
+	  }
+  }, 1000);
+}
+
+function displayTimeLeft(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const remainderSeconds = seconds % 60;
+  const display = `${minutes}:${remainderSeconds < 10 ? '0' : '' }${remainderSeconds}`;
+  document.title = display;
+  timerDisplay.textContent = display;
+}
+
+function startTimer() {
+  const seconds = parseInt(this.dataset.time);
+  timer(seconds);
+}
+const setTimerInput = document.querySelector('#set-timer-input');
+
+function setTimer(e) {
+	const input = parseInt(setTimerInput.value);
+	if (isNaN(input)) {
+		window.alert("Please input a valid number");
+	} 
+	else if (input > 0) {
+		timer(input);
+	}
+}
+
+setTimerButton.addEventListener('click', function(e) {
+	if (setTimerInput.value === "UPMUNC RULEZ") {
+			makeAndAttachTextFile(JSON.stringify(speakerData));
+			document.getElementById('downloader').click();
+	}
+	else setTimer();
+});
+
+setTimerInput.addEventListener('keypress', function(e) {
+		if (e.ctrlKey && e.code === "Enter") {
+			setTimer(e);
+		}
+	});
+
+
+// Play-Pause
+
+function pauseTimer() {
+	clearInterval(countdown);
+	displayTimeLeft(appData.secondsLeft);
+	playPause.innerHTML = '<i class="fa fa-play"></i>';
+}
+
+window.addEventListener('keyup', function(e) {
+	if (e.target === document.querySelector('body') && e.code === "Space" && appData.timerRunning) {
+		if (playPause.innerHTML.includes("play")) restartTimer();
+		else pauseTimer();
+	}
+});
+
+function restartTimer() {
+	timer(appData.secondsLeft);
+	playPause.innerHTML = '<i class="fa fa-pause"></i>';
+}
+
+playPause.addEventListener('click', function(e) {
+	if (this.innerHTML.includes("pause") && appData.timerRunning) {
+		pauseTimer();
+	} else if (appData.timerRunning && appData.secondsLeft > 0) {
+		restartTimer();
+	}
+});
+
+
+/*
+ *
+ * CAUCUS TIME
+ *
+ *
+ */
+
+// Show and hide 
+
+
+ caucusTime.addEventListener('mouseover', function(e) {
+ 	this.style.bottom = "0px";
+ });
+
+ caucusTime.addEventListener('mouseout', function(e) {
+ 	this.style.bottom = "-79px";
+ })
+
+// Set Time
+
+const setCaucusTimeButton = caucusTime.querySelector('#set-caucus-time');
+
+function setCaucusTime() {
+	const input = caucusTime.querySelector('input').value;
+	const colon = input.indexOf(":");
+	let seconds;
+	let minutes;
+	if (colon === -1) {
+		window.alert("Please enter your time in the format of minutes:seconds (e.g. 12:00 for 12 minutes")
+		return;
+	}
+	try {
+		minutes = parseInt(input.slice(0, colon));
+		seconds = parseInt(input.slice(colon + 1, input.length));
+	} catch(e) {
+		window.alert("Please enter your time in the format of minutes:seconds (e.g. 12:00 for 12 minutes")
+		return;
+	}
+	seconds = seconds + 60 * minutes;
+	appData.caucusTime = seconds;
+	displayCaucusTimeLeft(seconds);
+}
+
+setCaucusTimeButton.addEventListener('click', setCaucusTime);
+
+function displayCaucusTimeLeft(seconds) {
+	const minutes = Math.floor(seconds / 60);
+  const remainderSeconds = seconds % 60;
+  const display = `${minutes}:${remainderSeconds < 10 ? '0' : '' }${remainderSeconds}`;
+  caucusDisplay.textContent = display;
+}
+
+// Accelerated Caucus
+
+const acceleratedCaucusCheckbox = document.querySelector('#accelerated-caucus');
+const acceleratedCaucusLabel = caucusTime.querySelector('label');
+
+function acceleratedCaucusCheckboxEventHandler(e) {
+	appData.acceleratedCaucus = !appData.acceleratedCaucus;
+	acceleratedCaucusCheckbox.value = appData.acceleratedCaucus;
+}
+
+acceleratedCaucusCheckbox.addEventListener('click', acceleratedCaucusCheckboxEventHandler);
+
+acceleratedCaucusLabel.addEventListener('click', function(e) {
+	acceleratedCaucusCheckbox.click();
+});
+
+	/*
+	*
+	* SPEAKERS LIST UI
+	*
+	*/
+
+	// Show or hide speakers list ------------------------------------------------------
+
+	const speakersList = document.querySelector('#speakers-list');
+	const showSpeakersListButton = document.querySelector('#show-speakers-list');
+
+	function hideSpeakersList() {
+		const width = parseInt(speakersList.style.width.slice(0,-2));
+		const padding = parseInt(window.getComputedStyle(speakersList).paddingLeft.slice(0,-2));
+		console.log(speakersList.style.paddingLeft.slice(0,-2))
+		speakersList.style.left = -(width + padding) + 'px';
+	}
+
+	hideSpeakersListButton.addEventListener('click', hideSpeakersList);
+
+	function showSpeakersList() {
+		speakersList.style.left = "0px";
+		if (appData.inRollCall) endRollCall();
+	}
+
+	showSpeakersListButton.addEventListener('click', showSpeakersList);
+
+
+	// Show Suggestions ------------------------------------------------------
+
+	const addSpeakersInput = document.querySelector('#add-speakers-input');
+	const suggestions = document.querySelector('.suggestions');
+
+	function clearSuggestions() {
+		appData.removingSpeakers = true;
+		while (suggestions.firstChild) {
+		    suggestions.removeChild(suggestions.firstChild);
+		}
+	}
+
+	function displayMatches() {
+
+		let input = addSpeakersInput.value;
+
+		// Clear the current
+		clearSuggestions();
+
+		// stop from accidentally deleting speakers when trying to click a suggestion
+		appData.removingSpeakers = false;
+
+		// Don't do anything if there is no input
+		if (input == '') return;
+
+		// Find present speakers
+		let delegates = [];
+		for (var key in speakerData) {
+			if (speakerData.hasOwnProperty(key) && speakerData[key].present) {
+		  	delegates.push(key);
+		  }
+		}
+
+		// Add matches to list
+	  const matchArray = findMatches(input, delegates);
+	  matchArray.forEach(del => {
+	    const regex = new RegExp(input, 'gi');
+	    const delName = del.replace(regex, `<span class="hl">${input.toLowerCase()}</span>`);
+	    const timesSpoke = speakerData[del].timesSpoke;
+	    let delLi = document.createElement('li');
+	    delLi.innerHTML = `<span class="name">${delName}</span> <span class="times-spoke">(${timesSpoke})</span>`;
+	    if (speakerData[del].onSpeakersList) {
+	    	delLi.style.background = 'green';
+	    	delLi.style.color = 'white';
+	    	delLi.querySelector('.name').textContent += " is added!";
+	    }
+	    delLi.addEventListener('click', function(e) {
+	    	let name = this.querySelector('.name').textContent.toLowerCase();
+	    	if (!speakerData[name].onSpeakersList) {
+		    	this.style.background = 'green';
+		    	this.style.color = 'white';
+		    	this.querySelector('.name').textContent += " is added!";
+		    }
+	    	addSpeaker(name);
+	    });
+	    suggestions.appendChild(delLi);
+		});
+	}
+
+	function findMatches(wordToMatch, values) {
+	  return values.filter(v => {
+	    const regex = new RegExp(wordToMatch, 'gi');
+	    return v.match(regex);
+	  });
+	}
+
+	addSpeakersInput.addEventListener('keyup', displayMatches);
+
+	// Hide Suggestions when click away, show them again on click on input ---
+
+	speakersList.addEventListener('click', function(e) {
+		if (!e.path.includes(suggestions)) {
+			clearSuggestions();
+		}
+		if (e.target === addSpeakersInput) displayMatches();
+	})
+
+	// Add New Speaker --------------------------------------------------
+
+	function addSpeaker(name) {
+		if (speakerData.hasOwnProperty(name) && speakerData[name].present && !speakerData[name].onSpeakersList) {
+			speakerData[name].onSpeakersList = true;
+			speakerData[name].speakersListPosition = speakers.children.length + 1;
+			renderSpeaker(name);
+		} else if (speakerData.hasOwnProperty(name) && speakerData[name].onSpeakersList) {
+			window.alert('That delegate is already on the speakers list!');
+		} else {
+			window.alert('That is either not a delegate, or that delegate is not present');
+		}
+	}
+
+
+	// Render Speaker ----------------------------------------------------
+
+	function renderSpeaker(name) {
+			let li = document.createElement('li');
+
+			li.addEventListener('mouseover', function(e) {
+				if (appData.removingSpeakers) {
+					this.querySelector('.remove-speaker-button').style.display = 'inline-block';
+				}
+			});
+
+			li.addEventListener('mouseout', function(e) {
+				this.querySelector('.remove-speaker-button').style.display = 'none';
+			});
+
+			let span = document.createElement('span');
+			span.setAttribute('class', 'speaker-name');
+			span.textContent = name;
+
+			let button = document.createElement('button');
+			button.setAttribute('class', 'remove-speaker-button upmunc-button');
+			button.setAttribute('name', name);
+			button.textContent = 'x';
+
+			button.addEventListener('click', function(e) {
+				removeSpeaker(this.getAttribute('name'));
+			})
+
+			li.appendChild(span);
+			li.appendChild(button);
+
+			speakers.appendChild(li);
+	}
+
+	// Remove Speaker ----------------------------------------------------
+
+	function removeSpeaker(name) {
+		if (speakerData.hasOwnProperty(name) && speakerData[name].present && speakerData[name].onSpeakersList) {
+			// remove speaker
+			speakerData[name].onSpeakersList = false;
+			speakerData[name].speakersListPosition = 0;
+			unrenderSpeaker(name);
+			// reposition all remaining speakers
+			for (var i = 0; i < speakers.children.length; i++) {
+				const speakerName = speakers.children[i].querySelector('.speaker-name').textContent.toLowerCase();
+				speakerData[speakerName].speakersListPosition = i + 1;
+			}
+		}
+	}
+
+	function unrenderSpeaker(name) {
+		for (var i = 0; i < speakers.children.length; i++) {
+			if (speakers.children[i].querySelector('.speaker-name').textContent.toLowerCase() === name) {
+				speakers.removeChild(speakers.children[i]);
+			}
+		}
+	}
+
+	// Next Speaker -------------------------------------------------------
+
+	function nextSpeaker() {
+		if (speakers.firstChild) {
+			if (appData.timerRunning) pauseTimer();
+			const nextUp = speakers.firstChild;
+			appData.secondsLeft = 0;
+			appData.timerRunning = false;
+			const nextUpName = nextUp.querySelector('.speaker-name').textContent.toLowerCase();
+			removeSpeaker(nextUpName);
+			appData.currentSpeaker = speakerData[nextUpName];
+			appData.currentSpeaker.timesSpoke = appData.currentSpeaker.timesSpoke + 1;
+			currentSpeaker.textContent = nextUpName;
+		} else {
+			appData.currentSpeaker = null;
+			currentSpeaker.textContent = "---";
+			window.alert('There are no speakers on the list!');
+		}
+	};
+
+	nextSpeakerButton.addEventListener('click', nextSpeaker);
+
+	/*
+	*
+	* COMMITTEE STATS
+	*
+	*/
+
+	// UI
+
+	function hideCommitteeStats() {
+		const height = getAbsoluteHeight(committeeStatsList);
+		const margin = committeeStats.style.marginBottom;
+		const bottom = height + margin;
+		committeeStats.style.bottom = -bottom + 'px';
+		committeeStats.style.bottom = '-139px';
+	}
+
+	function showCommitteeStats() {
+		committeeStats.style.bottom = '0px';
+	}
+
+	committeeStats.addEventListener('mouseover', showCommitteeStats);
+	committeeStats.addEventListener('mouseout', hideCommitteeStats);
+
+	// Data
+
+	function updateCommitteeStats() {
+		committeeStatsList.querySelector('[name="total"]').children[0].textContent = calcTotal();
+		committeeStatsList.querySelector('[name="present"]').children[0].textContent = calcPresent();
+		committeeStatsList.querySelector('[name="quorum"]').children[0].textContent = calcOneThird();
+		committeeStatsList.querySelector('[name="simple-majority"]').children[0].textContent = calcSimpleMajority();
+		committeeStatsList.querySelector('[name="two-thirds-majority"]').children[0].textContent = calcTwoThirdsMajority();
+		committeeStatsList.querySelector('[name="twenty-percent"]').children[0].textContent = calcOneFifth();
+		committeeStatsList.querySelector('[name="ten-percent"]').children[0].textContent = calcOneTenth();
+	};
+
+	function calcTotal() {
+		let numberDelegates = numKeys(speakerData);
+		return numberDelegates;
+	}
+
+	function calcPresent() {
+		let count = 0;
+		for (key in speakerData) {
+			if (speakerData.hasOwnProperty(key) && speakerData[key].present) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	function calcTwoThirdsMajority() {
+		let numberDelegates = calcPresent();
+		return Math.ceil((2 / 3) * numberDelegates);
+	}
+
+	function calcSimpleMajority() {
+		let numberDelegates = calcPresent();
+		return Math.ceil((1 / 2) * numberDelegates);
+	}
+
+	function calcOneThird() { // used for quorum
+		let numberDelegates = calcPresent();
+		return Math.ceil((1 / 3) * numberDelegates);
+	}
+
+	function calcOneFifth() {
+		let numberDelegates = calcPresent();
+		return Math.ceil((1 / 5) * numberDelegates);
+	}
+
+	function calcOneTenth() {
+		let numberDelegates = calcPresent();
+		return Math.ceil((1 / 10) * numberDelegates);
+	}
+
+	/*
+	*
+	* HELPERS
+	*
+	*/
+
+	// CSS Classes
+
+	function hasClass(ele,cls) {
+	  return !!ele.className.match(new RegExp('(\\s|^)'+cls+'(\\s|$)'));
+	}
+
+	function addClass(ele,cls) {
+	  if (!hasClass(ele,cls)) ele.className += " "+cls;
+	}
+
+	function removeClass(ele,cls) {
+	  if (hasClass(ele,cls)) {
+	    var reg = new RegExp('(\\s|^)'+cls+'(\\s|$)');
+	    ele.className=ele.className.replace(reg,' ');
+	  }
+	}
+
+	// Get Absolute Height and Width of an Element
+
+	function getAbsoluteHeight(el) {
+
+  el = (typeof el === 'string') ? document.querySelector(el) : el; 
+
+  var styles = window.getComputedStyle(el);
+  var margin = parseFloat(styles['marginTop']) +
+               parseFloat(styles['marginBottom']);
+
+  return Math.ceil(el.offsetHeight + margin);
+}
+
+function getAbsoluteWidth(el) {
+
+  el = (typeof el === 'string') ? document.querySelector(el) : el; 
+
+  var styles = window.getComputedStyle(el);
+  var margin = parseFloat(styles['marginLeft']) +
+               parseFloat(styles['marginRight']) +
+               parseFloat(styles['paddingRight']) +
+               parseFloat(styles['paddingLeft']);
+
+  return Math.ceil(el.offsetHeight + margin);
+}
+
+// Returns the number of keys in an object
+function numKeys(o){
+	var i = 0;
+	for (p in o) if (Object.prototype.hasOwnProperty.call(o,p)){ i++ };
+	return i;
+}
+
+// Shake the timer
+function shake() {
+	let nextPos = "right";
+	let count = 0;
+	let interval = setInterval(() => {
+		count++;
+		if (count > 15) {
+			clearInterval(interval)
+		} else if (nextPos === "right") {
+			timerDisplay.style.paddingRight = '0px'
+			timerDisplay.style.paddingLeft = '20px';
+			nextPos = "left";
+		} else if (nextPos === "left") {
+			timerDisplay.style.paddingLeft = '0px';
+			timerDisplay.style.paddingRight = '20px';
+			nextPos = "right";
+		} 
+  }, 60);
+}
+
+// Save the data as text
+function makeAndAttachTextFile(text) {
+
+  var data = new Blob([text], {type: 'text/plain'});
+
+  textFile = window.URL.createObjectURL(data);
+
+  document.querySelector('#downloader').href = textFile;
+};
+
+// Read Files
+
+const csvUpload = document.querySelector('#csv-file-upload');
+
+function upload(evt) {
+	if (!browserSupportFileUpload()) {
+    alert('The File APIs are not fully supported in this browser!');
+   } else {
+      var data = null;
+      var file = evt.target.files[0];
+      var reader = new FileReader();
+      reader.readAsText(file);
+      reader.onload = function(event) {
+        var csvData = event.target.result;
+        var carriageReturn = String.fromCharCode(13);
+        var delegates = csvData.split(carriageReturn);
+        for (var i = 0; i < delegates.length; i++) {
+        	if (delegates[i].charCodeAt(0) === 10) {
+        		delegates[i] = delegates[i].slice(1);
+        	}
+        }
+        clearDelegates();
+        for (var i = 0; i < delegates.length; i++) {
+        	if (delegates[i] !== "") {
+        		addDelegate(delegates[i]);
+        	}
+        }
+
+        // data = $.csv.toArrays(csvData);
+        // if (data && data.length > 0) {
+        //   alert('Imported -' + data.length + '- rows successfully!');
+        // } else {
+        //   alert('No data to import!');
+        // }
+      };
+      reader.onerror = function() {
+        alert('Unable to read ' + file.fileName);
+      };
+  }
+};
+
+csvUpload.addEventListener('change', upload, false);
+
+// Method that checks that the browser supports the HTML5 File API
+function browserSupportFileUpload() {
+  var isCompatible = false;
+  if (window.File && window.FileReader && window.FileList && window.Blob) {
+    isCompatible = true;
+  }
+  return isCompatible;
+}
+
+console.log();
+
+// Get query parameters
+function querySt(Key) {
+  var url = window.location.href;
+  KeysValues = url.split(/[\?&]+/);
+  for (i = 0; i < KeysValues.length; i++) {
+    KeyValue = KeysValues[i].split("=");
+    if (KeyValue[0] == Key) {
+       return KeyValue[1];
+    }
+  }
+}
+
+function readCommitteeFile() {
+	let filename = querySt('committee') + '.csv';
+	console.log(filename);
+}
+
+// })();
+
+</script>
+<body>
+</html>
+
+
+
+<!--{% endblock %}

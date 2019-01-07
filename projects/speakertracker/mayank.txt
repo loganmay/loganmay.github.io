@@ -1,0 +1,49 @@
+in ServerModel
+
+setUserNickName(userId) {
+	if not valid name // Mayank
+	Broadcast.error(this, ServerModel.INVALID_NAME)
+
+	Iterator<User> iterator = users.iterator();
+	while (iterator.hasNext()) {
+		if (iterator.next().getUserID() == userId) {
+			Broadcast.error(this, ServerError.NAME_ALREADY_IN_USE)
+		}
+	}
+
+	// mayank copy and paste all that get all recipients code
+
+	Broadcast.okay(this, allThePeople);
+}
+
+
+createNewChannel(String channelName, String owner, boolean personal) {
+	if channelName invalid // Mayank
+	Broadcast.error(this, ServerError.INVALID_NAME);
+
+	while (channels.hasNext()) {
+		if (channels.next().getName().equals(channelName)) {
+			return Broadcast.error(this, ServerError.CHANNEL_ALREADY_EXISTS);
+		}
+	}
+
+	Channel newChan = new Channel(owner, channelName);
+	newChan.changePrivacy(personal);
+	channels.add(newChan);
+}
+
+addUsersToChannel(String userName, String channelName) {
+	Iterator<String> channelIterator = channels.iterator();
+	while (channelIterator.hasNext()) {
+		Channel chan = channelIterator.next(); 
+		if (chan.getName().equals(channelName) && !chan.personal()) { // Mayank
+			User u = getUserByName(userName);
+			chan.addUser(u);
+			return Broadcast.okay(this, );
+		}
+		if (chan.getName().equals(channelName) && chan.personal()) {
+			return Broadcast.error(this, ServerError.JOIN_PRIVATE_CHANNEL);
+		}
+	}
+	return Broadcast.error(this, ServerError.NO_SUCH_CHANNEL);
+}

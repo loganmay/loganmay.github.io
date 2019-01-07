@@ -1,0 +1,757 @@
+{% extends "layout.html" %}
+{% set active_page = 'speakertracking' %}
+
+{% block content %}
+<p id="numbers"></p>
+
+<button type="button" onclick="getDelegates()"> Set Quorum and Passing Vote </button>
+
+<p id="timer"> 0:00 </p>
+<p id="speakerTimer">0:00 / 0:00</p>
+
+<button type="button" onclick="add()"> Add Time </button>
+<button type="button" onclick="start()"> Start Timer </button>
+<button type="button" onclick="stop()"> Stop Timer </button>
+<button type="button" onclick="reset()"> Reset Timer </button>
+<button type="button" onclick="speakingTime()">Set Speaking Time</button>
+<button type="button" onclick="next()">Next Speaker</button>
+
+<h1> Speakers </h1>
+<p id="speakers"></p>
+<!--<button type="button" onclick="addSpeaker()"> Add Speaker </button>
+<button type="button" onclick="removeSpeaker()"> Remove Speaker </button> -->
+<button type="button" onclick="resetSpeakers()"> Reset Speakers </button>
+
+<button type="button" onclick="showChecks()"> Take Roll</button>
+<button type="button" onclick="tallyRoll()"> Done With Roll</button>
+<button type='button' onclick='showButtons()'> Add Speaker </button>
+<button type='button' onclick='showButRemove()'> RemoveSpeaker</button>
+<button type='button' onclick='hideButtons()'> Hide Speaker Buttons </button>
+<button type='button' onclick='displayTotalSpeaking()'> Display Number of Times Spoken</button>
+
+<div id = "AllButtons" style ="visibility : hidden;" >
+<button type="button" onclick="AddSpeakerButton('Afghanistan')"> Afghanistan 
+<button type="button" onclick="AddSpeakerButton('Aland Islands')"> Aland Islands 
+<button type="button" onclick="AddSpeakerButton('Albania')"> Albania 
+<button type="button" onclick="AddSpeakerButton('Algeria')"> Algeria 
+<button type="button" onclick="AddSpeakerButton('American Samoa')"> American Samoa 
+<button type="button" onclick="AddSpeakerButton('Andorra')"> Andorra 
+<button type="button" onclick="AddSpeakerButton('Angola')"> Angola 
+<button type="button" onclick="AddSpeakerButton('Anguilla')"> Anguilla
+<button type="button" onclick="AddSpeakerButton('Antartica')"> Antartica
+<button type="button" onclick="AddSpeakerButton('Antigua and Barbados')"> Antigua and Barbados 
+<button type="button" onclick="AddSpeakerButton('Argentina')"> Argentina
+<button type="button" onclick="AddSpeakerButton('Armenia')"> Armenia
+<button type="button" onclick="AddSpeakerButton('Aruba')"> Aruba 
+<button type="button" onclick="AddSpeakerButton('Australia')"> Australia 
+<button type="button" onclick="AddSpeakerButton('Austria')"> Austria 
+<button type="button" onclick="AddSpeakerButton('Azerbaijan')"> Azerbaijan 
+<button type="button" onclick="AddSpeakerButton('Bahamas')"> Bahamas 
+<button type="button" onclick="AddSpeakerButton('Bahrain')"> Bahrain 
+<button type="button" onclick="AddSpeakerButton('Bangladesh')"> Bangladesh 
+<button type="button" onclick="AddSpeakerButton('Barbados')"> Barbados
+<button type="button" onclick="AddSpeakerButton('Belarus')"> Belarus
+<button type="button" onclick="AddSpeakerButton('Belgium')"> Belgium
+<button type="button" onclick="AddSpeakerButton('Belize')"> Belize
+<button type="button" onclick="AddSpeakerButton('Benin')"> Benin
+<button type="button" onclick="AddSpeakerButton('Bermuda')"> Bermuda
+<button type="button" onclick="AddSpeakerButton('Bhutan')"> Bhutan
+<button type="button" onclick="AddSpeakerButton('Bolivia')"> Bolivia
+<button type="button" onclick="AddSpeakerButton('Bosnia And Herzegovina')"> Bosnia And Herzegovina
+<button type="button" onclick="AddSpeakerButton('Botswana')"> Botswana
+<button type="button" onclick="AddSpeakerButton('Bouvet Island')"> Bouvet Island
+<button type="button" onclick="AddSpeakerButton('Brazil')"> Brazil
+<button type="button" onclick="AddSpeakerButton('British Indian Ocean Territory')"> British Indian Ocean Territory
+<button type="button" onclick="AddSpeakerButton('Brunei Darussalam')"> Brunei Darussalam
+<button type="button" onclick="AddSpeakerButton('Bulgaria')"> Bulgaria
+<button type="button" onclick="AddSpeakerButton('Burkina Faso')"> Burkina Faso
+<button type="button" onclick="AddSpeakerButton('Burundi')"> Burundi
+<button type="button" onclick="AddSpeakerButton('Cambodia')"> Cambodia
+<button type="button" onclick="AddSpeakerButton('Cameroon')"> Cameroon
+<button type="button" onclick="AddSpeakerButton('Canada')"> Canada
+<button type="button" onclick="AddSpeakerButton('Cape Verde')"> Cape Verde
+<button type="button" onclick="AddSpeakerButton('Cayman Islands')"> Cayman Islands
+<button type="button" onclick="AddSpeakerButton('Central African Republic')"> Central African Republic
+<button type="button" onclick="AddSpeakerButton('Chad')"> Chad
+<button type="button" onclick="AddSpeakerButton('Chile')"> Chile
+<button type="button" onclick="AddSpeakerButton('China')"> China
+<button type="button" onclick="AddSpeakerButton('Christmas Island')"> Christmas Island
+<button type="button" onclick="AddSpeakerButton('Cocos (Keeling) Islands')"> Cocos (Keeling) Islands
+<button type="button" onclick="AddSpeakerButton('Colombia')"> Colombia
+<button type="button" onclick="AddSpeakerButton('Comoros')"> Comoros
+<button type="button" onclick="AddSpeakerButton('Congo')"> Congo
+<button type="button" onclick="AddSpeakerButton('DR Congo')"> DR Congo
+<button type="button" onclick="AddSpeakerButton('Democratic Republic of the Congo')"> Democratic Republic of the Congo
+<button type="button" onclick="AddSpeakerButton('Cook Islands')"> Cook Islands
+<button type="button" onclick="AddSpeakerButton('Costa Rica')"> Costa Rica
+<button type="button" onclick="AddSpeakerButton('Cote D\'Ivoire')"> Cote D'Ivoire
+<button type="button" onclick="AddSpeakerButton('Croatia')"> Croatia
+<button type="button" onclick="AddSpeakerButton('Cuba')"> Cuba
+<button type="button" onclick="AddSpeakerButton('Cyprus')"> Cyprus
+<button type="button" onclick="AddSpeakerButton('Czech Republic')"> Czech Republic
+<button type="button" onclick="AddSpeakerButton('Denmark')"> Denmark
+<button type="button" onclick="AddSpeakerButton('Djibouti')"> Djibouti
+<button type="button" onclick="AddSpeakerButton('Dominica')"> Dominica
+<button type="button" onclick="AddSpeakerButton('Dominican Republic')"> Dominican Republic
+<button type="button" onclick="AddSpeakerButton('Ecuador')"> Ecuador
+<button type="button" onclick="AddSpeakerButton('Egypt')"> Egypt
+<button type="button" onclick="AddSpeakerButton('El Salvador')"> El Salvador
+<button type="button" onclick="AddSpeakerButton('Equatorial Guinea')"> Equatorial Guinea
+<button type="button" onclick="AddSpeakerButton('Eritrea')"> Eritrea
+<button type="button" onclick="AddSpeakerButton('Estonia')"> Estonia
+<button type="button" onclick="AddSpeakerButton('Ethiopia')"> Ethiopia
+<button type="button" onclick="AddSpeakerButton('alkland Islands (Malvinas)')"> Falkland Islands (Malvinas)
+<button type="button" onclick="AddSpeakerButton('Faroe Islands')"> Faroe Islands
+<button type="button" onclick="AddSpeakerButton('Fiji')"> Fiji
+<button type="button" onclick="AddSpeakerButton('Finland')"> Finland
+<button type="button" onclick="AddSpeakerButton('France')"> France
+<button type="button" onclick="AddSpeakerButton('French Guiana')"> French Guiana
+<button type="button" onclick="AddSpeakerButton('French Polynesia')"> French Polynesia
+<button type="button" onclick="AddSpeakerButton('French Southern Territories')"> French Southern Territories
+<button type="button" onclick="AddSpeakerButton('Gabon')"> Gabon
+<button type="button" onclick="AddSpeakerButton('Gambia')"> Gambia
+<button type="button" onclick="AddSpeakerButton('Georgia')"> Georgia
+<button type="button" onclick="AddSpeakerButton('Germany')"> Germany
+<button type="button" onclick="AddSpeakerButton('Ghana')"> Ghana
+<button type="button" onclick="AddSpeakerButton('Gibraltar')"> Gibraltar
+<button type="button" onclick="AddSpeakerButton('Greece')"> Greece
+<button type="button" onclick="AddSpeakerButton('Greenland')"> Greenland
+<button type="button" onclick="AddSpeakerButton('Grenada')"> Grenada
+<button type="button" onclick="AddSpeakerButton('Guadeloupe')"> Guadeloupe
+<button type="button" onclick="AddSpeakerButton('Guam')"> Guam
+<button type="button" onclick="AddSpeakerButton('Guatemala')"> Guatemala
+<button type="button" onclick="AddSpeakerButton('Guernsey')"> Guernsey
+<button type="button" onclick="AddSpeakerButton('Guinea')"> Guinea
+<button type="button" onclick="AddSpeakerButton('Guinea-Bissau')"> Guinea-Bissau
+<button type="button" onclick="AddSpeakerButton('Guyana')"> Guyana
+<button type="button" onclick="AddSpeakerButton('Haiti')"> Haiti
+<button type="button" onclick="AddSpeakerButton('Heard Island And Mcdonald Islands')"> Heard Island And Mcdonald Islands
+<button type="button" onclick="AddSpeakerButton('Holy See (Vatican City State)')"> Holy See (Vatican City State)
+<button type="button" onclick="AddSpeakerButton('Honduras')"> Honduras
+<button type="button" onclick="AddSpeakerButton('Hong Kong')"> Hong Kong
+<button type="button" onclick="AddSpeakerButton('Hungary')"> Hungary
+<button type="button" onclick="AddSpeakerButton('Iceland')"> Iceland
+<button type="button" onclick="AddSpeakerButton('India')"> India
+<button type="button" onclick="AddSpeakerButton('Indonesia')"> Indonesia
+<button type="button" onclick="AddSpeakerButton('Iran')"> Iran
+<button type="button" onclick="AddSpeakerButton('Iraq')"> Iraq
+<button type="button" onclick="AddSpeakerButton('Ireland')"> Ireland
+<button type="button" onclick="AddSpeakerButton('Isle Of Man')"> Isle Of Man
+<button type="button" onclick="AddSpeakerButton('Israel')"> Israel
+<button type="button" onclick="AddSpeakerButton('Italy')"> Italy
+<button type="button" onclick="AddSpeakerButton('Jamaica')"> Jamaica
+<button type="button" onclick="AddSpeakerButton('Japan')"> Japan
+<button type="button" onclick="AddSpeakerButton('Jersey')"> Jersey
+<button type="button" onclick="AddSpeakerButton('Jordan')"> Jordan
+<button type="button" onclick="AddSpeakerButton('Kazakhstan')"> Kazakhstan
+<button type="button" onclick="AddSpeakerButton('Kenya')"> Kenya
+<button type="button" onclick="AddSpeakerButton('Kiribati')"> Kiribati
+<button type="button" onclick="AddSpeakerButton('South Korea')"> South Korea
+<button type="button" onclick="AddSpeakerButton('North Korea')"> North Korea
+<button type="button" onclick="AddSpeakerButton('Korea')"> Korea
+<button type="button" onclick="AddSpeakerButton('Kuwait')"> Kuwait
+<button type="button" onclick="AddSpeakerButton('Kyrgyzstan')"> Kyrgyzstan
+<button type="button" onclick="AddSpeakerButton('Lao People\'s Democratic Republic')"> Lao People's Democratic Republic
+<button type="button" onclick="AddSpeakerButton('Latvia')"> Latvia
+<button type="button" onclick="AddSpeakerButton('Lebanon')"> Lebanon
+<button type="button" onclick="AddSpeakerButton('Lesotho')"> Lesotho
+<button type="button" onclick="AddSpeakerButton('Liberia')"> Liberia
+<button type="button" onclick="AddSpeakerButton('Libyan Arab Jamahiriya')"> Libyan Arab Jamahiriya
+<button type="button" onclick="AddSpeakerButton('Liechtenstein')"> Liechtenstein
+<button type="button" onclick="AddSpeakerButton('Lithuania')"> Lithuania
+<button type="button" onclick="AddSpeakerButton('Luxembourg')"> Luxembourg
+<button type="button" onclick="AddSpeakerButton('Macao')"> Macao
+<button type="button" onclick="AddSpeakerButton('Macedonia, The Former Yugoslav Republic Of')"> Macedonia, The Former Yugoslav Republic Of
+<button type="button" onclick="AddSpeakerButton('Madagascar')"> Madagascar
+<button type="button" onclick="AddSpeakerButton('Malawi')"> Malawi
+<button type="button" onclick="AddSpeakerButton('Malaysia')"> Malaysia
+<button type="button" onclick="AddSpeakerButton('Maldives')"> Maldives
+<button type="button" onclick="AddSpeakerButton('Mali')"> Mali
+<button type="button" onclick="AddSpeakerButton('Malta')"> Malta
+<button type="button" onclick="AddSpeakerButton('Marshall Islands')"> Marshall Islands
+<button type="button" onclick="AddSpeakerButton('Martinique')"> Martinique
+<button type="button" onclick="AddSpeakerButton('Mauritania')"> Mauritania
+<button type="button" onclick="AddSpeakerButton('Mauritius')"> Mauritius
+<button type="button" onclick="AddSpeakerButton('Mayotte')"> Mayotte
+<button type="button" onclick="AddSpeakerButton('Mexico')"> Mexico
+<button type="button" onclick="AddSpeakerButton('Micronesia, Federated States Of')"> Micronesia, Federated States Of
+<button type="button" onclick="AddSpeakerButton('Moldova, Republic Of')"> Moldova, Republic Of
+<button type="button" onclick="AddSpeakerButton('Monaco')"> Monaco
+<button type="button" onclick="AddSpeakerButton('Mongolia')"> Mongolia
+<button type="button" onclick="AddSpeakerButton('Montserrat')"> Montserrat
+<button type="button" onclick="AddSpeakerButton('Morocco')"> Morocco
+<button type="button" onclick="AddSpeakerButton('Mozambique')"> Mozambique
+<button type="button" onclick="AddSpeakerButton('Myanmar')"> Myanmar
+<button type="button" onclick="AddSpeakerButton('Namibia')"> Namibia
+<button type="button" onclick="AddSpeakerButton('Nauru')"> Nauru
+<button type="button" onclick="AddSpeakerButton('Nepal')"> Nepal
+<button type="button" onclick="AddSpeakerButton('Netherlands')"> Netherlands
+<button type="button" onclick="AddSpeakerButton('Netherlands Antilles')"> Netherlands Antilles
+<button type="button" onclick="AddSpeakerButton('New Caledonia')"> New Caledonia
+<button type="button" onclick="AddSpeakerButton('New Zealand')"> New Zealand
+<button type="button" onclick="AddSpeakerButton('Nicaragua')"> Nicaragua
+<button type="button" onclick="AddSpeakerButton('Niger')"> Niger
+<button type="button" onclick="AddSpeakerButton('Nigeria')"> Nigeria
+<button type="button" onclick="AddSpeakerButton('Niue')"> Niue
+<button type="button" onclick="AddSpeakerButton('Norfolk Island')"> Norfolk Island
+<button type="button" onclick="AddSpeakerButton('Northern Mariana Islands')"> Northern Mariana Islands
+<button type="button" onclick="AddSpeakerButton('Norway')"> Norway
+<button type="button" onclick="AddSpeakerButton('Oman')"> Oman
+<button type="button" onclick="AddSpeakerButton('Pakistan')"> Pakistan
+<button type="button" onclick="AddSpeakerButton('Palau')"> Palau
+<button type="button" onclick="AddSpeakerButton('Palestinian Territory, Occupied')"> Palestinian Territory, Occupied
+<button type="button" onclick="AddSpeakerButton('Panama')"> Panama
+<button type="button" onclick="AddSpeakerButton('Papua New Guinea')"> Papua New Guinea
+<button type="button" onclick="AddSpeakerButton('Paraguay')"> Paraguay
+<button type="button" onclick="AddSpeakerButton('Peru')"> Peru
+<button type="button" onclick="AddSpeakerButton('Philippines')"> Philippines
+<button type="button" onclick="AddSpeakerButton('Pitcairn')"> Pitcairn
+<button type="button" onclick="AddSpeakerButton('Poland')"> Poland
+<button type="button" onclick="AddSpeakerButton('Portugal')"> Portugal
+<button type="button" onclick="AddSpeakerButton('Puerto Rico')"> Puerto Rico
+<button type="button" onclick="AddSpeakerButton('Qatar')"> Qatar
+<button type="button" onclick="AddSpeakerButton('Reunion')"> Reunion
+<button type="button" onclick="AddSpeakerButton('Romania')"> Romania
+<button type="button" onclick="AddSpeakerButton('Russia')"> Russia
+<button type="button" onclick="AddSpeakerButton('Rwanda')"> Rwanda
+<button type="button" onclick="AddSpeakerButton('Saint Helena')"> Saint Helena
+<button type="button" onclick="AddSpeakerButton('Saint Kitts And Nevis')"> Saint Kitts And Nevis
+<button type="button" onclick="AddSpeakerButton('Saint Lucia')"> Saint Lucia
+<button type="button" onclick="AddSpeakerButton('Saint Pierre And Miquelon')"> Saint Pierre And Miquelon
+<button type="button" onclick="AddSpeakerButton('Saint Vincent And The Grenadines')"> Saint Vincent And The Grenadines
+<button type="button" onclick="AddSpeakerButton('Samoa')"> Samoa
+<button type="button" onclick="AddSpeakerButton('San Marino')"> San Marino
+<button type="button" onclick="AddSpeakerButton('Sao Tome And Principe')"> Sao Tome And Principe
+<button type="button" onclick="AddSpeakerButton('Saudi Arabia')"> Saudi Arabia
+<button type="button" onclick="AddSpeakerButton('Senegal')"> Senegal
+<button type="button" onclick="AddSpeakerButton('Serbia And Montenegro')"> Serbia And Montenegro
+<button type="button" onclick="AddSpeakerButton('Seychelles')"> Seychelles
+<button type="button" onclick="AddSpeakerButton('Sierra Leone')"> Sierra Leone
+<button type="button" onclick="AddSpeakerButton('Singapore')"> Singapore
+<button type="button" onclick="AddSpeakerButton('Slovakia')"> Slovakia
+<button type="button" onclick="AddSpeakerButton('Slovenia')"> Slovenia
+<button type="button" onclick="AddSpeakerButton('Solomon Islands')"> Solomon Islands
+<button type="button" onclick="AddSpeakerButton('Somalia')"> Somalia
+<button type="button" onclick="AddSpeakerButton('South Africa')"> South Africa
+<button type="button" onclick="AddSpeakerButton('South Georgia And The South Sandwich Islands')"> South Georgia And The South Sandwich Islands
+<button type="button" onclick="AddSpeakerButton('Spain')"> Spain
+<button type="button" onclick="AddSpeakerButton('Sri Lanka')"> Sri Lanka
+<button type="button" onclick="AddSpeakerButton('Sudan')"> Sudan
+<button type="button" onclick="AddSpeakerButton('Suriname')"> Suriname
+<button type="button" onclick="AddSpeakerButton('Svalbard And Jan Mayen')"> Svalbard And Jan Mayen
+<button type="button" onclick="AddSpeakerButton('Swaziland')"> Swaziland
+<button type="button" onclick="AddSpeakerButton('Sweden')"> Sweden
+<button type="button" onclick="AddSpeakerButton('Switzerland')"> Switzerland
+<button type="button" onclick="AddSpeakerButton('Syria')"> Syria
+<button type="button" onclick="AddSpeakerButton('Taiwan, Province Of China')"> Taiwan, Province Of China
+<button type="button" onclick="AddSpeakerButton('Tajikistan')"> Tajikistan
+<button type="button" onclick="AddSpeakerButton('Tanzania, United Republic Of')"> Tanzania, United Republic Of
+<button type="button" onclick="AddSpeakerButton('Thailand')"> Thailand
+<button type="button" onclick="AddSpeakerButton('Timor-Leste')"> Timor-Leste
+<button type="button" onclick="AddSpeakerButton('Togo')"> Togo
+<button type="button" onclick="AddSpeakerButton('Tokelau')"> Tokelau
+<button type="button" onclick="AddSpeakerButton('Tonga')"> Tonga
+<button type="button" onclick="AddSpeakerButton('Trinidad And Tobago')"> Trinidad And Tobago
+<button type="button" onclick="AddSpeakerButton('Tunisia')"> Tunisia
+<button type="button" onclick="AddSpeakerButton('Turkey')"> Turkey
+<button type="button" onclick="AddSpeakerButton('Turkmenistan')"> Turkmenistan
+<button type="button" onclick="AddSpeakerButton('Turks And Caicos Islands')"> Turks And Caicos Islands
+<button type="button" onclick="AddSpeakerButton('Tuvalu')"> Tuvalu
+<button type="button" onclick="AddSpeakerButton('Uganda')"> Uganda
+<button type="button" onclick="AddSpeakerButton('Ukraine')"> Ukraine
+<button type="button" onclick="AddSpeakerButton('United Arab Emirates')"> United Arab Emirates
+<button type="button" onclick="AddSpeakerButton('United Kingdom')"> United Kingdom
+<button type="button" onclick="AddSpeakerButton('United States')"> United States
+<button type="button" onclick="AddSpeakerButton('United States Minor Outlying Islands')"> United States Minor Outlying Islands
+<button type="button" onclick="AddSpeakerButton('Uruguay')"> Uruguay
+<button type="button" onclick="AddSpeakerButton('Uzbekistan')"> Uzbekistan
+<button type="button" onclick="AddSpeakerButton('Vanuatu')"> Vanuatu
+<button type="button" onclick="AddSpeakerButton('Venezuela')"> Venezuela
+<button type="button" onclick="AddSpeakerButton('Viet Nam')"> Viet Nam
+<button type="button" onclick="AddSpeakerButton('Virgin Islands, British')"> Virgin Islands, British
+<button type="button" onclick="AddSpeakerButton('Virgin Islands, U.S.')"> Virgin Islands, U.S.
+<button type="button" onclick="AddSpeakerButton('Wallis And Futuna')"> Wallis And Futuna
+<button type="button" onclick="AddSpeakerButton('Western Sahara')"> Western Sahara
+<button type="button" onclick="AddSpeakerButton('Yemen')"> Yemen
+<button type="button" onclick="AddSpeakerButton('Zambia')"> Zambia
+<button type="button" onclick="AddSpeakerButton('Zimbabwe')"> Zimbabwe
+</div>
+
+
+
+<div id="AllCheckbox" style ="visibility : hidden;">
+<input type="checkbox" class = "attendance"> Afghanistan 
+<input type="checkbox" class = "attendance"> Aland Islands 
+<input type="checkbox" class = "attendance"> Albania 
+<input type="checkbox" class = "attendance"> Algeria 
+<input type="checkbox" class = "attendance"> American Samoa 
+<input type="checkbox" class = "attendance"> Andorra 
+<input type="checkbox" class = "attendance"> Angola 
+<input type="checkbox" class = "attendance"> Anguilla
+<input type="checkbox" class = "attendance"> Antartica
+<input type="checkbox" class = "attendance"> Antigua and Barbados 
+<input type="checkbox" class = "attendance"> Argentina
+<input type="checkbox" class = "attendance"> Armenia
+<input type="checkbox" class = "attendance"> Aruba 
+<input type="checkbox" class = "attendance"> Australia 
+<input type="checkbox" class = "attendance"> Austria 
+<input type="checkbox" class = "attendance"> Azerbaijan 
+<input type="checkbox" class = "attendance"> Bahamas 
+<input type="checkbox" class = "attendance"> Bahrain 
+<input type="checkbox" class = "attendance"> Bangladesh 
+<input type="checkbox" class = "attendance"> Barbados
+<input type="checkbox" class = "attendance"> Belarus
+<input type="checkbox" class = "attendance"> Belgium
+<input type="checkbox" class = "attendance"> Belize
+<input type="checkbox" class = "attendance"> Benin
+<input type="checkbox" class = "attendance"> Bermuda
+<input type="checkbox" class = "attendance"> Bhutan
+<input type="checkbox" class = "attendance"> Bolivia
+<input type="checkbox" class = "attendance"> Bosnia And Herzegovina
+<input type="checkbox" class = "attendance"> Botswana
+<input type="checkbox" class = "attendance"> Bouvet Island
+<input type="checkbox" class = "attendance"> Brazil
+<input type="checkbox" class = "attendance"> British Indian Ocean Territory
+<input type="checkbox" class = "attendance"> Brunei Darussalam
+<input type="checkbox" class = "attendance"> Bulgaria
+<input type="checkbox" class = "attendance"> Burkina Faso
+<input type="checkbox" class = "attendance"> Burundi
+<input type="checkbox" class = "attendance"> Cambodia
+<input type="checkbox" class = "attendance"> Cameroon
+<input type="checkbox" class = "attendance"> Canada
+<input type="checkbox" class = "attendance"> Cape Verde
+<input type="checkbox" class = "attendance"> Cayman Islands
+<input type="checkbox" class = "attendance"> Central African Republic
+<input type="checkbox" class = "attendance"> Chad
+<input type="checkbox" class = "attendance"> Chile
+<input type="checkbox" class = "attendance"> China
+<input type="checkbox" class = "attendance"> Christmas Island
+<input type="checkbox" class = "attendance"> Cocos (Keeling) Islands
+<input type="checkbox" class = "attendance"> Colombia
+<input type="checkbox" class = "attendance"> Comoros
+<input type="checkbox" class = "attendance"> Congo
+<input type="checkbox" class = "attendance"> DR Congo
+<input type="checkbox" class = "attendance"> Democratic Republic of the Congo
+<input type="checkbox" class = "attendance"> Cook Islands
+<input type="checkbox" class = "attendance"> Costa Rica
+<input type="checkbox" class = "attendance"> Cote D'Ivoire
+<input type="checkbox" class = "attendance"> Croatia
+<input type="checkbox" class = "attendance"> Cuba
+<input type="checkbox" class = "attendance"> Cyprus
+<input type="checkbox" class = "attendance"> Czech Republic
+<input type="checkbox" class = "attendance"> Denmark
+<input type="checkbox" class = "attendance"> Djibouti
+<input type="checkbox" class = "attendance"> Dominica
+<input type="checkbox" class = "attendance"> Dominican Republic
+<input type="checkbox" class = "attendance"> Ecuador
+<input type="checkbox" class = "attendance"> Egypt
+<input type="checkbox" class = "attendance"> El Salvador
+<input type="checkbox" class = "attendance"> Equatorial Guinea
+<input type="checkbox" class = "attendance"> Eritrea
+<input type="checkbox" class = "attendance"> Estonia
+<input type="checkbox" class = "attendance"> Ethiopia
+<input type="checkbox" class = "attendance"> Falkland Islands (Malvinas)
+<input type="checkbox" class = "attendance"> Faroe Islands
+<input type="checkbox" class = "attendance"> Fiji
+<input type="checkbox" class = "attendance"> Finland
+<input type="checkbox" class = "attendance"> France
+<input type="checkbox" class = "attendance"> French Guiana
+<input type="checkbox" class = "attendance"> French Polynesia
+<input type="checkbox" class = "attendance"> French Southern Territories
+<input type="checkbox" class = "attendance"> Gabon
+<input type="checkbox" class = "attendance"> Gambia
+<input type="checkbox" class = "attendance"> Georgia
+<input type="checkbox" class = "attendance"> Germany
+<input type="checkbox" class = "attendance"> Ghana
+<input type="checkbox" class = "attendance"> Gibraltar
+<input type="checkbox" class = "attendance"> Greece
+<input type="checkbox" class = "attendance"> Greenland
+<input type="checkbox" class = "attendance"> Grenada
+<input type="checkbox" class = "attendance"> Guadeloupe
+<input type="checkbox" class = "attendance"> Guam
+<input type="checkbox" class = "attendance"> Guatemala
+<input type="checkbox" class = "attendance"> Guernsey
+<input type="checkbox" class = "attendance"> Guinea
+<input type="checkbox" class = "attendance"> Guinea-Bissau
+<input type="checkbox" class = "attendance"> Guyana
+<input type="checkbox" class = "attendance"> Haiti
+<input type="checkbox" class = "attendance"> Heard Island And Mcdonald Islands
+<input type="checkbox" class = "attendance"> Holy See (Vatican City State)
+<input type="checkbox" class = "attendance"> Honduras
+<input type="checkbox" class = "attendance"> Hong Kong
+<input type="checkbox" class = "attendance"> Hungary
+<input type="checkbox" class = "attendance"> Iceland
+<input type="checkbox" class = "attendance"> India
+<input type="checkbox" class = "attendance"> Indonesia
+<input type="checkbox" class = "attendance"> Iran
+<input type="checkbox" class = "attendance"> Iraq
+<input type="checkbox" class = "attendance"> Ireland
+<input type="checkbox" class = "attendance"> Isle Of Man
+<input type="checkbox" class = "attendance"> Israel
+<input type="checkbox" class = "attendance"> Italy
+<input type="checkbox" class = "attendance"> Jamaica
+<input type="checkbox" class = "attendance"> Japan
+<input type="checkbox" class = "attendance"> Jersey
+<input type="checkbox" class = "attendance"> Jordan
+<input type="checkbox" class = "attendance"> Kazakhstan
+<input type="checkbox" class = "attendance"> Kenya
+<input type="checkbox" class = "attendance"> Kiribati
+<input type="checkbox" class = "attendance"> South Korea
+<input type="checkbox" class = "attendance"> North Korea
+<input type="checkbox" class = "attendance"> Korea
+<input type="checkbox" class = "attendance"> Kuwait
+<input type="checkbox" class = "attendance"> Kyrgyzstan
+<input type="checkbox" class = "attendance"> Lao People'S Democratic Republic
+<input type="checkbox" class = "attendance"> Latvia
+<input type="checkbox" class = "attendance"> Lebanon
+<input type="checkbox" class = "attendance"> Lesotho
+<input type="checkbox" class = "attendance"> Liberia
+<input type="checkbox" class = "attendance"> Libyan Arab Jamahiriya
+<input type="checkbox" class = "attendance"> Liechtenstein
+<input type="checkbox" class = "attendance"> Lithuania
+<input type="checkbox" class = "attendance"> Luxembourg
+<input type="checkbox" class = "attendance"> Macao
+<input type="checkbox" class = "attendance"> Macedonia, The Former Yugoslav Republic Of
+<input type="checkbox" class = "attendance"> Madagascar
+<input type="checkbox" class = "attendance"> Malawi
+<input type="checkbox" class = "attendance"> Malaysia
+<input type="checkbox" class = "attendance"> Maldives
+<input type="checkbox" class = "attendance"> Mali
+<input type="checkbox" class = "attendance"> Malta
+<input type="checkbox" class = "attendance"> Marshall Islands
+<input type="checkbox" class = "attendance"> Martinique
+<input type="checkbox" class = "attendance"> Mauritania
+<input type="checkbox" class = "attendance"> Mauritius
+<input type="checkbox" class = "attendance"> Mayotte
+<input type="checkbox" class = "attendance"> Mexico
+<input type="checkbox" class = "attendance"> Micronesia, Federated States Of
+<input type="checkbox" class = "attendance"> Moldova, Republic Of
+<input type="checkbox" class = "attendance"> Monaco
+<input type="checkbox" class = "attendance"> Mongolia
+<input type="checkbox" class = "attendance"> Montserrat
+<input type="checkbox" class = "attendance"> Morocco
+<input type="checkbox" class = "attendance"> Mozambique
+<input type="checkbox" class = "attendance"> Myanmar
+<input type="checkbox" class = "attendance"> Namibia
+<input type="checkbox" class = "attendance"> Nauru
+<input type="checkbox" class = "attendance"> Nepal
+<input type="checkbox" class = "attendance"> Netherlands
+<input type="checkbox" class = "attendance"> Netherlands Antilles
+<input type="checkbox" class = "attendance"> New Caledonia
+<input type="checkbox" class = "attendance"> New Zealand
+<input type="checkbox" class = "attendance"> Nicaragua
+<input type="checkbox" class = "attendance"> Niger
+<input type="checkbox" class = "attendance"> Nigeria
+<input type="checkbox" class = "attendance"> Niue
+<input type="checkbox" class = "attendance"> Norfolk Island
+<input type="checkbox" class = "attendance"> Northern Mariana Islands
+<input type="checkbox" class = "attendance"> Norway
+<input type="checkbox" class = "attendance"> Oman
+<input type="checkbox" class = "attendance"> Pakistan
+<input type="checkbox" class = "attendance"> Palau
+<input type="checkbox" class = "attendance"> Palestinian Territory, Occupied
+<input type="checkbox" class = "attendance"> Panama
+<input type="checkbox" class = "attendance"> Papua New Guinea
+<input type="checkbox" class = "attendance"> Paraguay
+<input type="checkbox" class = "attendance"> Peru
+<input type="checkbox" class = "attendance"> Philippines
+<input type="checkbox" class = "attendance"> Pitcairn
+<input type="checkbox" class = "attendance"> Poland
+<input type="checkbox" class = "attendance"> Portugal
+<input type="checkbox" class = "attendance"> Puerto Rico
+<input type="checkbox" class = "attendance"> Qatar
+<input type="checkbox" class = "attendance"> Reunion
+<input type="checkbox" class = "attendance"> Romania
+<input type="checkbox" class = "attendance"> Russia
+<input type="checkbox" class = "attendance"> Rwanda
+<input type="checkbox" class = "attendance"> Saint Helena
+<input type="checkbox" class = "attendance"> Saint Kitts And Nevis
+<input type="checkbox" class = "attendance"> Saint Lucia
+<input type="checkbox" class = "attendance"> Saint Pierre And Miquelon
+<input type="checkbox" class = "attendance"> Saint Vincent And The Grenadines
+<input type="checkbox" class = "attendance"> Samoa
+<input type="checkbox" class = "attendance"> San Marino
+<input type="checkbox" class = "attendance"> Sao Tome And Principe
+<input type="checkbox" class = "attendance"> Saudi Arabia
+<input type="checkbox" class = "attendance"> Senegal
+<input type="checkbox" class = "attendance"> Serbia And Montenegro
+<input type="checkbox" class = "attendance"> Seychelles
+<input type="checkbox" class = "attendance"> Sierra Leone
+<input type="checkbox" class = "attendance"> Singapore
+<input type="checkbox" class = "attendance"> Slovakia
+<input type="checkbox" class = "attendance"> Slovenia
+<input type="checkbox" class = "attendance"> Solomon Islands
+<input type="checkbox" class = "attendance"> Somalia
+<input type="checkbox" class = "attendance"> South Africa
+<input type="checkbox" class = "attendance"> South Georgia And The South Sandwich Islands
+<input type="checkbox" class = "attendance"> Spain
+<input type="checkbox" class = "attendance"> Sri Lanka
+<input type="checkbox" class = "attendance"> Sudan
+<input type="checkbox" class = "attendance"> Suriname
+<input type="checkbox" class = "attendance"> Svalbard And Jan Mayen
+<input type="checkbox" class = "attendance"> Swaziland
+<input type="checkbox" class = "attendance"> Sweden
+<input type="checkbox" class = "attendance"> Switzerland
+<input type="checkbox" class = "attendance"> Syria
+<input type="checkbox" class = "attendance"> Taiwan, Province Of China
+<input type="checkbox" class = "attendance"> Tajikistan
+<input type="checkbox" class = "attendance"> Tanzania, United Republic Of
+<input type="checkbox" class = "attendance"> Thailand
+<input type="checkbox" class = "attendance"> Timor-Leste
+<input type="checkbox" class = "attendance"> Togo
+<input type="checkbox" class = "attendance"> Tokelau
+<input type="checkbox" class = "attendance"> Tonga
+<input type="checkbox" class = "attendance"> Trinidad And Tobago
+<input type="checkbox" class = "attendance"> Tunisia
+<input type="checkbox" class = "attendance"> Turkey
+<input type="checkbox" class = "attendance"> Turkmenistan
+<input type="checkbox" class = "attendance"> Turks And Caicos Islands
+<input type="checkbox" class = "attendance"> Tuvalu
+<input type="checkbox" class = "attendance"> Uganda
+<input type="checkbox" class = "attendance"> Ukraine
+<input type="checkbox" class = "attendance"> United Arab Emirates
+<input type="checkbox" class = "attendance"> United Kingdom
+<input type="checkbox" class = "attendance"> United States
+<input type="checkbox" class = "attendance"> United States Minor Outlying Islands
+<input type="checkbox" class = "attendance"> Uruguay
+<input type="checkbox" class = "attendance"> Uzbekistan
+<input type="checkbox" class = "attendance"> Vanuatu
+<input type="checkbox" class = "attendance"> Venezuela
+<input type="checkbox" class = "attendance"> Viet Nam
+<input type="checkbox" class = "attendance"> Virgin Islands, British
+<input type="checkbox" class = "attendance"> Virgin Islands, U.S.
+<input type="checkbox" class = "attendance"> Wallis And Futuna
+<input type="checkbox" class = "attendance"> Western Sahara
+<input type="checkbox" class = "attendance"> Yemen
+<input type="checkbox" class = "attendance"> Zambia
+<input type="checkbox" class = "attendance"> Zimbabwe
+</div>
+
+
+<p id=SpeakingTotal> </p>
+
+
+
+
+<script>
+var updateSpeaking = true;
+var interval = 1000;
+var timerId = 0;
+var timerId2 = 0;
+var enabled = false;
+var index = 0;
+var speakers = [];
+var enabledSpeaker = false;
+var speakerTime = 0;
+var indexSmall = -1;
+var addOrRemove = 1;
+var countryList = [{Country:"Afghanistan", Times:0}, {Country:"Aland Islands", Times:0}, {Country:"Albania", Times: 0}, {Country:"Algeria", Times:0}, {Country:"American Samoa" , Times:0}, {Country:"Andorra" ,Times:0}, {Country:"Angola", Times:0}, {Country:"Anguilla", Times:0}, {Country:"Antarctica" , Times: 0}, {Country:"Antigua And Barbuda" , Times: 0}, {Country:"Argentina" , Times: 0}, {Country:"Armenia" , Times: 0}, {Country:"Aruba" , Times: 0}, {Country:"Australia" , Times: 0}, {Country:"Austria" , Times: 0}, {Country:"Azerbaijan" , Times: 0}, {Country:"Bahamas" , Times: 0}, {Country:"Bahrain" , Times: 0}, {Country:"Bangladesh" , Times: 0},  {Country:"Barbados" , Times: 0},  {Country:"Belarus" , Times: 0},  {Country:"Belgium" , Times: 0},  {Country:"Belize" , Times: 0},  {Country:"Benin" , Times: 0},  {Country:"Bermuda" , Times: 0},  {Country:"Bhutan" , Times: 0},  {Country:"Bolivia" , Times: 0},  {Country:"Bosnia And Herzegovina" , Times: 0},  {Country:"Botswana" , Times: 0},  {Country:"Bouvet Island" , Times: 0},  {Country:"Brazil" , Times: 0},  {Country:"British Indian Ocean Territory" , Times: 0},  {Country:"Brunei Darussalam" , Times: 0},  {Country:"Bulgaria" , Times: 0},  {Country:"Burkina Faso" , Times: 0},  {Country:"Burundi" , Times: 0},  {Country:"Cambodia" , Times: 0},  {Country:"Cameroon" , Times: 0},  {Country:"Canada" , Times: 0},  {Country:"Cape Verde" , Times: 0},  {Country:"Cayman Islands" , Times: 0},  {Country:"Central African Republic" , Times: 0},  {Country:"Chad" , Times: 0},  {Country:"Chile" , Times: 0},  {Country:"China" , Times: 0},  {Country:"Christmas Island" , Times: 0},  {Country:"Cocos (Keeling) Islands" , Times: 0},  {Country:"Colombia" , Times: 0},  {Country:"Comoros" , Times: 0},  {Country:"Congo" , Times: 0},  {Country:"DR Congo" , Times: 0},  {Country:"Democratic Republic of the Congo" , Times: 0},  {Country:"Cook Islands" , Times: 0},  {Country:"Costa Rica" , Times: 0},  {Country:"Cote D'Ivoire" , Times: 0},  {Country:"Croatia" , Times: 0},  {Country:"Cuba" , Times: 0},  {Country:"Cyprus" , Times: 0},  {Country:"Czech Republic" , Times: 0},  {Country:"Denmark" , Times: 0},  {Country:"Djibouti" , Times: 0},  {Country:"Dominica" , Times: 0},  {Country:"Dominican Republic" , Times: 0},  {Country:"Ecuador" , Times: 0},  {Country:"Egypt" , Times: 0},  {Country:"El Salvador" , Times: 0},  {Country:"Equatorial Guinea" , Times: 0},  {Country:"Eritrea" , Times: 0},  {Country:"Estonia" , Times: 0},  {Country:"Ethiopia" , Times: 0},  {Country:"Falkland Islands (Malvinas)" , Times: 0},  {Country:"Faroe Islands" , Times: 0},  {Country:"Fiji" , Times: 0},  {Country:"Finland" , Times: 0},  {Country:"France" , Times: 0},  {Country:"French Guiana" , Times: 0},  {Country:"French Polynesia" , Times: 0},  {Country:"French Southern Territories" , Times: 0},  {Country:"Gabon" , Times: 0},  {Country:"Gambia" , Times: 0},  {Country:"Georgia" , Times: 0},  {Country:"Germany" , Times: 0},  {Country:"Ghana" , Times: 0},  {Country:"Gibraltar" , Times: 0},  {Country:"Greece" , Times: 0},  {Country:"Greenland" , Times: 0},  {Country:"Grenada" , Times: 0},  {Country:"Guadeloupe" , Times: 0},  {Country:"Guam" , Times: 0},  {Country:"Guatemala" , Times: 0},  {Country:"Guernsey" , Times: 0},  {Country:"Guinea" , Times: 0},  {Country:"Guinea-Bissau" , Times: 0},  {Country:"Guyana" , Times: 0},  {Country:"Haiti" , Times: 0},  {Country:"Heard Island And Mcdonald Islands" , Times: 0},  {Country:"Holy See (Vatican City State)" , Times: 0},  {Country:"Honduras" , Times: 0},  {Country:"Hong Kong" , Times: 0},  {Country:"Hungary" , Times: 0},  {Country:"Iceland" , Times: 0},  {Country:"India" , Times: 0},  {Country:"Indonesia" , Times: 0},  {Country:"Iran" , Times: 0},  {Country:"Iraq" , Times: 0},  {Country:"Ireland" , Times: 0},  {Country:"Isle Of Man" , Times: 0},  {Country:"Israel" , Times: 0},  {Country:"Italy" , Times: 0},  {Country:"Jamaica" , Times: 0},  {Country:"Japan" , Times: 0},  {Country:"Jersey" , Times: 0},  {Country:"Jordan" , Times: 0},  {Country:"Kazakhstan" , Times: 0},  {Country:"Kenya" , Times: 0},  {Country:"Kiribati" , Times: 0},  {Country:"South Korea" , Times: 0},  {Country:"North Korea" , Times: 0},  {Country:"Korea" , Times: 0},  {Country:"Kuwait" , Times: 0},  {Country:"Kyrgyzstan" , Times: 0},  {Country:"Lao People's Democratic Republic" , Times: 0},  {Country:"Latvia" , Times: 0},  {Country:"Lebanon" , Times: 0},  {Country:"Lesotho" , Times: 0},  {Country:"Liberia" , Times: 0},  {Country:"Libyan Arab Jamahiriya" , Times: 0},  {Country:"Liechtenstein" , Times: 0},  {Country:"Lithuania" , Times: 0},  {Country:"Luxembourg" , Times: 0},  {Country:"Macao" , Times: 0},  {Country:"Macedonia, The Former Yugoslav Republic Of" , Times: 0},  {Country:"Madagascar" , Times: 0},  {Country:"Malawi" , Times: 0},  {Country:"Malaysia" , Times: 0},  {Country:"Maldives" , Times: 0},  {Country:"Mali" , Times: 0},  {Country:"Malta" , Times: 0},  {Country:"Marshall Islands" , Times: 0},  {Country:"Martinique" , Times: 0},  {Country:"Mauritania" , Times: 0},  {Country:"Mauritius" , Times: 0},  {Country:"Mayotte" , Times: 0},  {Country:"Mexico" , Times: 0},  {Country:"Micronesia, Federated States Of" , Times: 0},  {Country:"Moldova, Republic Of" , Times: 0},  {Country:"Monaco" , Times: 0},  {Country:"Mongolia" , Times: 0},  {Country:"Montserrat" , Times: 0},  {Country:"Morocco" , Times: 0},  {Country:"Mozambique" , Times: 0},  {Country:"Myanmar" , Times: 0},  {Country:"Namibia" , Times: 0},  {Country:"Nauru" , Times: 0},  {Country:"Nepal" , Times: 0},  {Country:"Netherlands" , Times: 0},  {Country:"Netherlands Antilles" , Times: 0},  {Country:"New Caledonia" , Times: 0},  {Country:"New Zealand" , Times: 0},  {Country:"Nicaragua" , Times: 0},  {Country:"Niger" , Times: 0},  {Country:"Nigeria" , Times: 0},  {Country:"Niue" , Times: 0},  {Country:"Norfolk Island" , Times: 0},  {Country:"Northern Mariana Islands" , Times: 0},  {Country:"Norway" , Times: 0},  {Country:"Oman" , Times: 0},  {Country:"Pakistan" , Times: 0},  {Country:"Palau" , Times: 0},  {Country:"Palestinian Territory, Occupied" , Times: 0},  {Country:"Panama" , Times: 0},  {Country:"Papua New Guinea" , Times: 0},  {Country:"Paraguay" , Times: 0},  {Country:"Peru" , Times: 0},  {Country:"Philippines" , Times: 0},  {Country:"Pitcairn" , Times: 0},  {Country:"Poland" , Times: 0},  {Country:"Portugal" , Times: 0},  {Country:"Puerto Rico" , Times: 0},  {Country:"Qatar" , Times: 0},  {Country:"Reunion" , Times: 0},  {Country:"Romania" , Times: 0},  {Country:"Russia" , Times: 0},  {Country:"Rwanda" , Times: 0},  {Country:"Saint Helena" , Times: 0},  {Country:"Saint Kitts And Nevis" , Times: 0},  {Country:"Saint Lucia" , Times: 0},  {Country:"Saint Pierre And Miquelon" , Times: 0},  {Country:"Saint Vincent And The Grenadines" , Times: 0},  {Country:"Samoa" , Times: 0},  {Country:"San Marino" , Times: 0},  {Country:"Sao Tome And Principe" , Times: 0},  {Country:"Saudi Arabia" , Times: 0},  {Country:"Senegal" , Times: 0},  {Country:"Serbia And Montenegro" , Times: 0},  {Country:"Seychelles" , Times: 0},  {Country:"Sierra Leone" , Times: 0},  {Country:"Singapore" , Times: 0},  {Country:"Slovakia" , Times: 0},  {Country:"Slovenia" , Times: 0},  {Country:"Solomon Islands" , Times: 0},  {Country:"Somalia" , Times: 0},  {Country:"South Africa" , Times: 0},  {Country:"South Georgia And The South Sandwich Islands" , Times: 0},  {Country:"Spain" , Times: 0},  {Country:"Sri Lanka" , Times: 0},  {Country:"Sudan" , Times: 0},  {Country:"Suriname" , Times: 0},  {Country:"Svalbard And Jan Mayen" , Times: 0},  {Country:"Swaziland" , Times: 0},  {Country:"Sweden" , Times: 0},  {Country:"Switzerland" , Times: 0},  {Country:"Syria" , Times: 0},  {Country:"Taiwan, Province Of China" , Times: 0},  {Country:"Tajikistan" , Times: 0},  {Country:"Tanzania, United Republic Of" , Times: 0},  {Country:"Thailand" , Times: 0},  {Country:"Timor-Leste" , Times: 0},  {Country:"Togo" , Times: 0},  {Country:"Tokelau" , Times: 0},  {Country:"Tonga" , Times: 0},  {Country:"Trinidad And Tobago" , Times: 0},  {Country:"Tunisia" , Times: 0},  {Country:"Turkey" , Times: 0},  {Country:"Turkmenistan" , Times: 0},  {Country:"Turks And Caicos Islands" , Times: 0},  {Country:"Tuvalu" , Times: 0},  {Country:"Uganda" , Times: 0},  {Country:"Ukraine" , Times: 0},  {Country:"United Arab Emirates" , Times: 0},  {Country:"United Kingdom" , Times: 0},  {Country:"United States" , Times: 0},  {Country:"United States Minor Outlying Islands" , Times: 0},  {Country:"Uruguay" , Times: 0},  {Country:"Uzbekistan" , Times: 0},  {Country:"Vanuatu" , Times: 0},  {Country:"Venezuela" , Times: 0},  {Country:"Viet Nam" , Times: 0},  {Country:"Virgin Islands, British" , Times: 0},  {Country:"Virgin Islands, U.S." , Times: 0},  {Country:"Wallis And Futuna" , Times: 0},  {Country:"Western Sahara" , Times: 0},  {Country:"Yemen" , Times: 0},  {Country:"Zambia" , Times: 0}, {Country:"Zimbabwe", Times: 0}];
+
+
+//Timer Functions
+function tick(){
+	if(index <= 0){
+		stop();
+		index = 0;
+	}else if (indexSmall >= speakerTime){
+		stop();
+		updateSpeaking = true;
+		speakers.splice(0,1);
+		indexSmall = 0;
+		document.getElementById("speakerTimer").innerHTML = realTime(indexSmall) + " / " + realTime(speakerTime);
+		displayList();
+	}else if(enabled == true && enabledSpeaker == true){
+		index = index - 1;
+		indexSmall = indexSmall + 1
+		document.getElementById("timer").innerHTML = realTime(index);
+		document.getElementById("speakerTimer").innerHTML = realTime(indexSmall) + " / " + realTime(speakerTime);
+	}else if(enabled == true) {
+		index = index - 1;
+		document.getElementById("timer").innerHTML = realTime(index);
+	}
+}
+
+function reset(){
+	stop();
+	updateSpeaking = true;
+	index = 0;
+	indexSmall = 0;
+	speakerTime = 0;
+	enabled = false;
+	enabledSpeaker = false;
+	document.getElementById("speakerTimer").innerHTML = realTime(indexSmall) + " / " + realTime(speakerTime);
+	document.getElementById("timer").innerHTML = realTime(index);
+}
+
+function realTime(index){
+	var numberm = Math.floor(index / 60);
+	var numbers = index % 60;
+
+	if(numbers >= 10){
+		var out = String(numberm) + ":" + String(numbers);
+	}else{
+		var out = String(numberm) + ":0" + String(numbers);
+	}
+	return out;
+}
+
+function start() {
+	enabled = true;
+
+	if(updateSpeaking){
+	countryList.forEach(function(speaker){
+		if(speakers.indexOf(speaker.Country) == 0){
+			speaker.Times += 1;
+		}
+	});
+	displayTotalSpeaking();
+	}	
+
+	if(enabled == true && enabledSpeaker == true){
+		timerId = setInterval(function(){tick();},interval);
+	}
+	else if(enabled == true){
+		timerId = setInterval(function(){tick();},interval);
+	}
+	
+}
+
+function add() {
+	var time = prompt("enter time to add in seconds");
+	index += parseInt(time);
+	document.getElementById("timer").innerHTML = realTime(index);
+}
+
+function stop() {
+	enabled = false;
+	updateSpeaking = false;
+	clearInterval(timerId);
+	clearInterval(timerId2);
+}
+
+function speakingTime(){
+	enabledSpeaker = true;
+	speakerTime = prompt("Set Speaking Time in Seconds");
+	indexSmall = 0;
+	document.getElementById("speakerTimer").innerHTML = realTime(indexSmall) + " / " + realTime(speakerTime);
+}
+
+
+function next(){
+	stop();
+	updateSpeaking = true;
+	indexSmall = 0;
+	speakers.splice(0,1);
+	displayList();
+	document.getElementById("speakerTimer").innerHTML = realTime(indexSmall) + " / " + realTime(speakerTime);
+}
+//Speaker List Functions
+
+function addSpeaker() {
+	var country = prompt("Type Country to Add");
+	country = country.trim();
+	country = country.charAt(0).toUpperCase() + country.substring(1).toLowerCase();
+	if(country != null){
+		speakers.push(country);
+		displayList();
+	}
+}
+
+function displayList() {
+	var list = " "
+	speakers.forEach(function(element){
+		list = list + element + "<br />";
+	});
+	document.getElementById("speakers").innerHTML = list;
+}
+
+
+function removeSpeaker(){
+	var removal = prompt("Type Country to Remove");
+	removal = removal.trim();
+	removal = removal.charAt(0).toUpperCase(0) + removal.substring(1).toLowerCase();
+	var removalP = speakers.indexOf(removal);
+	if(removalP != -1){
+		speakers.splice(removalP,1);
+		displayList()
+	}
+}
+
+function resetSpeakers(){
+	speakers = [];
+	displayList();
+}
+
+//Quorum, one half, two thirds
+function getDelegates(){
+	var howMany = prompt("Input Number of Delegates in Committee");
+	var quorum = Math.ceil(howMany / 3);
+	var total = prompt("Input Number of Delegates Present");
+	var half = Math.ceil(total / 2);
+	var twoThirds= Math.ceil(total * (2 / 3));
+	document.getElementById("numbers").innerHTML = numbersLayout(quorum,half,twoThirds);
+	
+}
+
+function numbersLayout(quorum, half, twoThirds){
+	var layout = String("Quorum: " + quorum + " " + "Half: " + half + " " + "Two-Thirds: " + twoThirds);
+	return layout;
+}
+
+function showChecks(){
+	document.getElementById("AllCheckbox").style.visibility = "visible";
+}
+
+function tallyRoll(){
+	var numberPresent = 0;
+	document.getElementById("AllCheckbox").style.visibility = "hidden";
+	var checks = document.getElementsByClassName('attendance');
+	for(i = 0; i < checks.length; i++){
+		if(checks[i].checked){
+			numberPresent += 1;
+		}
+	}
+	document.getElementById("numbers").innerHTML = numberPresent;
+
+}
+
+function showButtons(){
+	document.getElementById("AllButtons").style.visibility = "visible";
+	addOrRemove = 1;
+}
+
+function showButRemove(){
+	document.getElementById("AllButtons").style.visibility = "visible";
+	addOrRemove = 0;
+}
+
+function hideButtons(){
+	document.getElementById("AllButtons").style.visibility = "hidden";
+}
+
+function AddSpeakerButton(name){
+	if(addOrRemove == 1){
+	speakers.push(name);
+	displayList();
+	}
+	else if(addOrRemove == 0){
+	var removalP = speakers.indexOf(name);
+	if(removalP != -1){
+		speakers.splice(removalP,1);
+		displayList();
+	}
+	}
+
+}
+
+function displayTotalSpeaking(){
+var totals = ""
+countryList.forEach(function(speaker){
+	totals = totals + speaker.Country + ': ' + String(speaker.Times) + '<br />'
+});
+document.getElementById('SpeakingTotal').innerHTML = totals;
+}
+
+</script>
+
+{% endblock %}
