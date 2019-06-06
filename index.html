@@ -462,6 +462,14 @@
     height: auto;
   }
 
+  @media only screen and (min-width: 721px) {
+    main {
+      padding-right: 0;
+      -webkit-transition: padding-right .25s ease-in-out;
+      transition: padding-right .25s ease-in-out;
+    }
+  } 
+
   @media only screen and (min-width: 641px) {
     .profile .profile-content ul.meta-sections {
         -webkit-box-orient: horizontal;
@@ -479,13 +487,22 @@
     }
   }
 
-    @media only screen and (min-width: 721px) {
-      main {
-        padding-right: 0;
-        -webkit-transition: padding-right .25s ease-in-out;
-        transition: padding-right .25s ease-in-out;
-      }
-    } 
+  @media only screen and (max-width: 640px) {
+    .profile .profile-content ul.meta-sections .meta-section {
+        width: 100%;
+    }
+    .profile .profile-content ul.meta-sections {
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        -webkit-flex-direction: column;
+        -ms-flex-direction: column;
+        flex-direction: column;
+    }
+    .profile .profile-content ul.meta-sections .meta-section+.meta-section {
+        margin-top: 20px;
+    }
+  }
+    
 
     </style>
   </head>
