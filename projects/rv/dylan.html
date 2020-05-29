@@ -1,0 +1,848 @@
+<style type="text/css">
+        
+        button {
+            border: 0;
+        }
+        button:hover {
+            cursor: pointer;
+        }
+        #presentation { 
+            width: 800px;
+            height: 450px;
+            background-image:url("http://4b1e.com/squeeze-sprite.jpg");
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+          margin-left: auto ; 
+          margin-right: auto ; 
+        }
+        @keyframes anim {
+            100% { background-position: -37600px; }
+        }
+        .squeeze-overlay {
+            background-color: rgba(255, 255, 255, 0.75);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 3em 0;
+        }
+        .squeeze-overlay-text {
+            font-size: 1em;
+            box-sizing: border-box;
+            text-align: center;
+          color: darkslategray;
+          margin-top: 1em;
+        }
+        .squeeze-overlay-text h3 {
+          color: darkslategray;
+            margin-bottom: .5em;
+          font-size: 1em;
+        }
+        #presentation-buttons {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+        }
+        #presentation-buttons button {
+            width: 100%;
+            padding: 1em;
+            background-color: rgb(40, 95, 159);
+            color: white;
+            font-size: 1.5em;
+            font-family: "Lato"
+        }
+        #presentation-buttons button:hover {
+            background-color: #2a88f5;
+        }
+        #presentation-buttons button:disabled,
+        #presentation-buttons button[disabled] {
+            background-color: #4788d1;
+            color: rgba(255,255,255,0.5);
+            cursor:auto;
+        }
+        #presentation-buttons button:disabled:hover,
+        #presentation-buttons button[disabled]:hover {
+            background-color: #4788d1;
+            color: rgba(255,255,255,0.5);
+            cursor:auto;
+        }
+        .bottom-buttons-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+        .left-key, .right-key {
+            font-size: 1.2em;
+            padding: .75em 1em .75em;
+            border: 2px solid #333;
+            border-radius: 2px;
+            background-color: #333;
+            color: white;
+        }
+        .left-text, .right-text {
+            font-size: 2em;
+            padding: .5em;
+            font-weight: bold;
+            min-width: 130px;
+            text-align: center;
+        }
+        .left-key:hover, .right-key:hover {
+            cursor: pointer;
+        }
+        .pushed-key {
+            background-color: white;
+            color: #333;
+        }
+        .metronome-wrapper {
+            margin: 15px auto 0px;
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            position: relative;
+        }
+        .metronome-speed {
+            position: absolute;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            top: 50%;
+            display:flex;
+            flex-direction: column;
+            font-size: 1.5em;
+            color: white;
+        }
+        #bpm-state {
+            display: flex;
+            align-items: center;
+        }
+        #bpm-state-units {
+            font-size: .5em;
+            margin-left: 2px;
+        }
+        .metronome-speed #speed-up, .metronome-speed #speed-down {
+            background: #174f62;
+            border-radius: 100px;
+            margin: 2px auto 4px;
+            width: 40px;
+        }
+        .metronome-speed #speed-up:hover, .metronome-speed #speed-down:hover {
+            cursor:pointer;
+        }
+        .success {
+            color: #3c763d;
+        }
+        .error {
+            color: #a94442;
+        }
+        .for-tutorial {
+            display:flex;
+            position:absolute;
+            left:50%;
+            transform:translateX(-50%);
+        }
+        #sound-on {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 23px;
+            font-size: 1.5em;
+        }
+        .score-message {
+            font-size: 2.5em; 
+            margin-bottom: 0
+        }
+        @media only screen and (max-width: 786px) {
+            #presentation {
+                height: 450px;
+                background-size: cover;
+                width: 100%;
+            }
+            #presentation-buttons {
+                align-items: stretch;
+            }
+            .squeeze-overlay {
+                padding: 0 1em 0;
+            }
+            .squeeze-overlay-text, .left-text, .right-text {
+                font-size: 1.5em;
+            }
+            .left-text, .right-text {
+                text-align: center;
+                min-width: auto;
+            }
+            .metronome-wrapper {
+                position: relative;
+                bottom: 15px;
+            }
+            .bottom-buttons-wrapper {
+                margin-top: 10px;
+                position: relative;
+            }
+            .for-tutorial {
+                display: flex;
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+                bottom: 45px;
+            }
+            .score-message {
+                font-size: 1.5em; 
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+<article id="presentation">
+        <div class="squeeze-overlay">
+            <div class="squeeze-overlay-text">Loading...</div>
+            <div class="bottom-buttons-wrapper">
+                <div class="left-key" style="display:none;"></div>
+                <div class="left-text" style="display:none;"></div>
+                <div class="metronome-wrapper">
+                    <img class="floating-phone" style="height: 145px;" src="https://images.squarespace-cdn.com/content/v1/58c983b3d2b85777efbeaee3/1590269136297-UK9WS3721KC7N97NPQF3/ke17ZwdGBToddI8pDm48kIXph6VDL7OnQ6PRcGTFTPblfiSMXz2YNBs8ylwAJx2qr7dJalY1eltJq26FYyRd7of-lEKrjc5Q9sgpSMYdp_TTCtMqo3ztI6UgBPwmF35w7Fy7xvjx1hLRgItRctGvRQ/phone_blue_screen.png">
+                    <div class="metronome-speed">
+                        <div id="sound-on" style="display:none;"><i class="fa fa-volume-up" aria-hidden="true"></i></div>
+                        <div id="speed-up"><i class="fa fa-chevron-up" style="position: relative;bottom: 3px;"></i></div>
+                        <div id="bpm-state">
+                            <div id="bpm-state-text">12</div>
+                            <div id="bpm-state-units">bpm</div>
+                        </div>
+                        <div id="speed-down"><i class="fa fa-chevron-down"></i></div>
+                    </div>               
+                </div>
+                <div class="right-text" style="display:none;"></div>
+                <div class="right-key" style="display:none;"></div>
+            </div>
+        </div>
+        <div id="presentation-buttons"></div>
+    </article>
+  <script>
+    (function(window) {
+
+        var simulation1Seconds = 10;
+        var simulation2Seconds = 60;
+
+        window.tutorialPresentationState = 0;
+        window.tutorialBPMState = 12;
+        window.tutorialShouldBePushedState = false;
+        window.GIFIntervalID = null;
+        window.tutorialCurrentScore = 0;
+        window.tutorialTotalReps = 1;
+        window.tutorialIsSimulation = false;
+        window.metronomeIntervalID = null;
+
+        var presentation = document.querySelector('#presentation');
+        var overlay = document.querySelector('.squeeze-overlay');
+        var text = document.querySelector('.squeeze-overlay-text');
+        var buttons = document.querySelector('#presentation-buttons');
+        var leftKey = document.querySelector('.left-key');
+        var rightKey = document.querySelector('.right-key');
+        leftKey.tutorialIsPushed = false;
+        rightKey.tutorialIsPushed = false;
+        var leftText = document.querySelector('.left-text');
+        var rightText = document.querySelector('.right-text');
+        var metronomeWrapper = document.querySelector('.metronome-wrapper');
+        var speedUp = metronomeWrapper.querySelector('#speed-up');
+        var bpmState = metronomeWrapper.querySelector('#bpm-state');
+        var bpmStateText = bpmState.querySelector('#bpm-state-text');
+        var speedDown = metronomeWrapper.querySelector('#speed-down');
+        var soundOn = metronomeWrapper.querySelector('#sound-on');
+
+        var pushSpan = '<span class="error">PUSH!</span>'; 
+        var releaseSpan = '<span class="error">RELEASE!</span>'; 
+        var goodSpan = '<span class="success">GOOD!</span>';
+
+        var GIFAnimationDuration = 2000; // milliseconds
+        var GIFAnimationSeconds = GIFAnimationDuration / 1000;
+        var GIFAnimationSteps = (37600 / presentation.offsetWidth).toFixed(0);
+
+        var sound = new Audio('https://static1.squarespace.com/static/58c983b3d2b85777efbeaee3/t/5ec99681bb99ad6e8640365d/1590269570451/tamborine.mp3/original/tamborine.mp3');
+        // sound.playbackRate = 2;
+
+        // sound.addEventListener('play', function() {
+        //     soundOn.style.display = 'block';
+        // });
+
+        // sound.addEventListener('ended', function() {
+        //     soundOn.style.display = 'none';
+        // });
+
+        speedUp.addEventListener('click', function(e) { 
+            window.tutorialBPMState = Math.min(window.tutorialBPMState + 1, 30);
+            bpmStateText.innerHTML = window.tutorialBPMState;
+        });
+        speedDown.addEventListener('click', function(e) { 
+            window.tutorialBPMState = Math.max(window.tutorialBPMState - 1, 1);
+            bpmStateText.innerHTML = window.tutorialBPMState;
+        });
+
+        function playAnimation(isInfinite) {
+            GIFAnimationSteps = (37600 / presentation.offsetWidth).toFixed(0);
+            var ratio = 800 / 450;
+            presentation.style.animation = 'anim ' + 2 + 's steps(' + 47 + ') ' + (isInfinite ? 'infinite' : '1');
+            presentation.style.animationPlayState = 'running';
+        }
+
+        function pauseAnimation() {
+            presentation.style.animationPlayState = 'paused';
+        }
+
+        function resetAnimation() {
+            GIFAnimationSteps = (37600 / presentation.offsetWidth).toFixed(0);
+            presentation.style.animation = 'none';
+            presentation.offsetHeight; /* trigger reflow to apply the change immediately */
+            presentation.style.animation = null;
+        }
+
+        function tutorialSelectDevice(deviceType) {
+            window.isMobile = deviceType == "TOUCH"
+            if (window.isMobile) {
+                setupMobileEventListeners();
+                leftKey.innerHTML = 'L';
+                rightKey.innerHTML = 'R';
+            } else {
+                setupKeyBoardEventListeners();
+                leftKey.innerHTML = 'Q';
+                rightKey.innerHTML = 'P';
+            }
+            setPresentationState(++window.tutorialPresentationState);
+        }
+        window.tutorialSelectDevice = tutorialSelectDevice;
+
+        function setupMobileEventListeners() {
+            leftKey.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                leftKey.classList.add('pushed-key');
+                if (window.tutorialIsSimulation) {
+                    leftKey.tutorialIsPushed = true;
+                    updateText();
+                    countScore();
+                }
+            });
+            rightKey.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                rightKey.classList.add('pushed-key');
+                if (window.tutorialIsSimulation) {
+                    rightKey.tutorialIsPushed = true;
+                    updateText();
+                    countScore();
+                }
+            });
+            leftKey.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                leftKey.classList.remove('pushed-key');
+                if (window.tutorialIsSimulation) {
+                    leftKey.tutorialIsPushed = false;
+                    updateText();
+                    countScore();
+                }
+            });
+            rightKey.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                rightKey.classList.remove('pushed-key');
+                if (window.tutorialIsSimulation) {
+                    rightKey.tutorialIsPushed = false;
+                    updateText();
+                    countScore();
+                }
+            });
+        }
+
+        function setupKeyBoardEventListeners() {
+            window.document.addEventListener('keydown', function(e) {
+                switch (e.code) {
+                    case "KeyQ":
+					
+                        leftKey.classList.add('pushed-key');
+                        if (window.tutorialIsSimulation) {
+                            leftKey.tutorialIsPushed = true;
+                            updateText();
+                            countScore();
+                        }
+                        break;
+                    case "KeyP":
+                        rightKey.classList.add('pushed-key');
+                        if (window.tutorialIsSimulation) {
+                            rightKey.tutorialIsPushed = true;
+                            updateText();
+                            countScore();
+                        }
+                        break; 
+                    }
+                });
+                window.document.addEventListener('keyup', function(e) {
+                    switch (e.code) {
+                        case "KeyQ":
+                            leftKey.classList.remove('pushed-key');
+                            if (window.tutorialIsSimulation) {
+                                leftKey.tutorialIsPushed = false;
+                                updateText();
+                                countScore();
+                            }
+                            break;
+                        case "KeyP":
+                            rightKey.classList.remove('pushed-key');
+
+                            if (window.tutorialIsSimulation) {
+                                rightKey.tutorialIsPushed = false;
+                                updateText();
+                                countScore();
+                            }
+                            break;
+                    }
+                });
+        }
+
+        function setPresentationState(stateIndex) {
+            switch (stateIndex) {
+                case 0:
+                    window.tutorialBPMState = 12;
+                    playAnimation();
+                    startGIFInterval(false, false);
+                    overlay.style.justifyContent = 'center';
+                    leftKey.style.visibility = 'visible';
+                    rightKey.style.visibility = 'visible';
+                    leftKey.style.display = 'none';
+                    rightKey.style.display = 'none';
+                    leftText.style.display = 'none';
+                    rightText.style.display = 'none';
+                    metronomeWrapper.style.display = 'none';
+                    text.innerHTML = '<h3>Interactive Tutorial</h3>Squeezing the Self-Inflating Bag at a Steady Rate';
+                    buttons.innerHTML = '<button onClick="setPresentationState(++tutorialPresentationState)">Click To Get Started</button>';
+                    buttons.querySelectorAll('button').forEach(function(button) {button.style.width = '100%'})
+                    break;
+                case 1:
+                    clearGIFInterval();
+                    pauseAnimation();
+                    overlay.style.justifyContent = 'center';
+                    leftKey.style.visibility = 'visible';
+                    rightKey.style.visibility = 'visible';
+                    leftKey.style.display = 'none';
+                    rightKey.style.display = 'none';
+                    leftText.style.display = 'none';
+                    rightText.style.display = 'none';
+                    metronomeWrapper.style.display = 'none';
+                    text.innerHTML = '<h3 style = "font-size: 2em; ">Select Your Device</h3>';
+                    buttons.innerHTML = '<button onClick="setPresentationState(--tutorialPresentationState)"><i class="fa fa-chevron-left" style="margin-right: 1em;"></i>Back</button><button onClick="tutorialSelectDevice(\'KEYBOARD\')"><i class="fa fa fa-laptop" style="margin-right: 1em;"></i>PC or Laptop</button><button onClick="tutorialSelectDevice(\'TOUCH\')"><i class="fa fa-mobile" style="margin-right: 1em;"></i>Tablet or Phone</button>';
+                    buttons.querySelectorAll('button').forEach(function(button, i) { i == 0 ? button.style.width = '20%' : button.style.width = '40%'})
+                    break;
+                case 2:
+                    clearGIFInterval();
+                    pauseAnimation();
+                    overlay.style.justifyContent = 'center';
+                    leftKey.style.visibility = 'visible';
+                    rightKey.style.visibility = 'visible';
+                    leftKey.style.display = 'none';
+                    rightKey.style.display = 'none';
+                    leftText.style.display = 'none';
+                    rightText.style.display = 'none';
+                    metronomeWrapper.style.display = 'none';
+                    device = window.isMobile ? 'touch screen' : 'keyboard';
+                    text.innerHTML = '<h3>Overview</h3>This tutorial asks you to use your <strong>' + device + '</strong> to simulate squeezing a Self-Inflating Bag <strong>at a steady rate</strong>.';
+                    buttons.innerHTML = '<button onClick="setPresentationState(--tutorialPresentationState)"><i class="fa fa-chevron-left" style="margin-right: 1em;"></i>Back</button><button onClick="setPresentationState(++tutorialPresentationState)">Next<i class="fa fa-chevron-right" style="margin-left: 1em;"></i></button>';
+                    buttons.querySelectorAll('button').forEach(function(button) {button.style.width = '50%'})
+                    break;
+                case 3:
+                    window.tutorialIsSimulation = false;
+                    clearGIFInterval();
+                    pauseAnimation();
+                    clearCueText();
+                    clearCountdownInterval();
+                    overlay.style.backgroundColor = 'rgba(255, 255, 255, 0.75)';
+                    overlay.style.justifyContent = 'space-between';
+                    leftKey.style.visibility = 'visible';
+                    rightKey.style.visibility = 'visible';
+                    leftKey.style.display = 'block';
+                    rightKey.style.display = 'block'
+                    leftText.style.display = 'none';
+                    rightText.style.display = 'none';
+                    metronomeWrapper.style.display = 'none';
+                    if (window.isMobile) {
+                        text.innerHTML = '<h3>How It Works</h3>On the next slide, the simulation will begin. Use your left thumb to push the <strong>L</strong> button and your right thumb to push the <strong>R</strong> button. Your goal is push and let go in sync with the video <strong>for 1 minute</strong>. The cues <strong class="error" style="font-size:2rem">PUSH!</strong> and <strong class="error" style="font-size:2rem">LET GO!</strong> will help you along.';
+                        buttons.innerHTML = '<button onClick="setPresentationState(--tutorialPresentationState)"><i class="fa fa-chevron-left" style="margin-right: 1em;"></i>Back</button><button onClick="setPresentationState(++tutorialPresentationState)">Next<i class="fa fa-chevron-right" style="margin-left: 1em;"></i></button>';
+                    } else {
+                        text.innerHTML = '<h3>How It Works</h3>On the next slide, the simulation will begin. Use your left thumb to push the <strong>Q</strong> key and your right thumb to push the <strong>P</strong> key. Your goal is push and let go in sync with the video <strong>for 1 minute</strong>. The cues <strong class="error" style="font-size:2rem">PUSH!</strong> and <strong class="error" style="font-size:2rem">LET GO!</strong> will help you along.';
+                        buttons.innerHTML = '<button onClick="setPresentationState(--tutorialPresentationState)"><i class="fa fa-chevron-left" style="margin-right: 1em;"></i>Back</button><button onClick="setPresentationState(++tutorialPresentationState)">Next<i class="fa fa-chevron-right" style="margin-left: 1em;"></i></button>';
+                    }
+                    buttons.innerHTML = '<button onClick="setPresentationState(--tutorialPresentationState)"><i class="fa fa-chevron-left" style="margin-right: 1em;"></i>Back</button><button onClick="setPresentationState(++tutorialPresentationState)">Next<i class="fa fa-chevron-right" style="margin-left: 1em;"></i></button>';
+                    buttons.querySelectorAll('button').forEach(function(button) {button.style.width = '50%'});
+                    break;
+                case 4:
+                    window.tutorialIsSimulation = true;
+                    window.tutorialBPMState = 12;
+                    window.tutorialTotalReps = Math.round((window.tutorialBPMState / 60) * simulation1Seconds);
+                    startGIFInterval(true, true, false);
+                    overlay.style.backgroundColor = 'rgba(255, 255, 255, 0.35)';
+                    overlay.style.justifyContent = 'space-between';
+                    leftKey.style.visibility = 'visible';
+                    rightKey.style.visibility = 'visible';
+                    leftKey.style.display = 'block';
+                    rightKey.style.display = 'block'
+                    leftText.style.display = 'block';
+                    rightText.style.display = 'block';
+                    metronomeWrapper.style.display = 'none';
+                    if (window.isMobile) {
+                        buttons.innerHTML = '<button onClick="setPresentationState(--tutorialPresentationState)"><i class="fa fa-chevron-left" style="margin-right: 1em;"></i>Back</button><button onClick="setPresentationState(++tutorialPresentationState)">Next<i class="fa fa-chevron-right" style="margin-left: 1em;"></i></button>';
+                    } else {
+                        buttons.innerHTML = '<button onClick="setPresentationState(--tutorialPresentationState)"><i class="fa fa-chevron-left" style="margin-right: 1em;"></i>Back</button><button onClick="setPresentationState(++tutorialPresentationState)">Next<i class="fa fa-chevron-right" style="margin-left: 1em;"></i></button>';
+                    }
+                    buttons.innerHTML = '<button onClick="setPresentationState(--tutorialPresentationState)"><i class="fa fa-chevron-left" style="margin-right: 1em;"></i>Back</button><button onClick="setPresentationState(++tutorialPresentationState)" disabled>Next<i class="fa fa-chevron-right" style="margin-left: 1em;"></i></button>';
+                    buttons.querySelectorAll('button').forEach(function(button) {button.style.width = '50%'});
+                    break;
+                case 5:
+                    window.tutorialIsSimulation = false;
+                    clearGIFInterval();
+                    pauseAnimation();
+                    clearCueText();
+                    clearCountdownInterval();
+                    overlay.style.backgroundColor = 'rgba(255, 255, 255, 0.75)';
+                    overlay.style.justifyContent = 'center';
+                    leftKey.style.visibility = 'visible';
+                    rightKey.style.visibility = 'visible';
+                    leftKey.style.display = 'none';
+                    rightKey.style.display = 'none';
+                    leftText.style.display = 'none';
+                    rightText.style.display = 'none';
+                    metronomeWrapper.style.display = 'none';
+                    text.innerHTML = '<h3>Good Job! 😃</h3>We\'ll next look at using a <strong>metronome app</strong> for keeping pace according to different rates, measured in <strong>breaths per minute (bpm)</strong>.';
+                    buttons.innerHTML = '<button onClick="setPresentationState(--tutorialPresentationState)"><i class="fa fa-chevron-left" style="margin-right: 1em;"></i>Back</button><button onClick="setPresentationState(++tutorialPresentationState)">Next<i class="fa fa-chevron-right" style="margin-left: 1em;"></i></button>';
+                    buttons.querySelectorAll('button').forEach(function(button) {button.style.width = '50%'})
+                    break;
+                case 6:
+                    window.tutorialIsSimulation = false;
+                    clearGIFInterval();
+                    pauseAnimation();
+                    clearCueText();
+                    overlay.style.backgroundColor = 'rgba(255, 255, 255, 0.75)';
+                    overlay.style.justifyContent = 'space-between';
+                    leftKey.style.visibility = 'visible';
+                    rightKey.style.visibility = 'visible';
+                    leftKey.style.display = 'none';
+                    rightKey.style.display = 'none';
+                    leftText.style.display = 'none';
+                    rightText.style.display = 'none';
+                    metronomeWrapper.style.display = 'flex';
+                    text.innerHTML = '<h3>Metronome Apps</h3>In real life, a metronome phone app helps operators keep pace at the desired breaths per minute (bpm) rate.';
+                    buttons.innerHTML = '<button onClick="setPresentationState(--tutorialPresentationState)"><i class="fa fa-chevron-left" style="margin-right: 1em;"></i>Back</button><button onClick="setPresentationState(++tutorialPresentationState)">Next<i class="fa fa-chevron-right" style="margin-left: 1em;"></i></button>';
+                    buttons.querySelectorAll('button').forEach(function(button) {button.style.width = '50%'})
+                    break;
+                case 7:
+                    window.tutorialIsSimulation = false;
+                    clearGIFInterval();
+                    pauseAnimation();
+                    clearCueText();
+                    overlay.style.backgroundColor = 'rgba(255, 255, 255, 0.75)';
+                    overlay.style.justifyContent = 'space-between';
+                    leftKey.style.visibility = 'visible';
+                    rightKey.style.visibility = 'visible';
+                    leftKey.style.display = 'none';
+                    rightKey.style.display = 'none';
+                    leftText.style.display = 'none';
+                    rightText.style.display = 'none';
+                    metronomeWrapper.style.display = 'flex';
+                    speedUp.style.display = 'block';
+                    speedDown.style.display = 'block';
+                    text.innerHTML = '<h3>Using Our Metronome \'App\'</h3><strong>Use the arrow buttons on the \'app\' below to adjust the rate</strong>.  12 breaths per minute (BPM) is our default rate, but please check with the clinician at your site prior to your shift.';
+                    buttons.innerHTML = '<button onClick="setPresentationState(--tutorialPresentationState)"><i class="fa fa-chevron-left" style="margin-right: 1em;"></i>Back</button><button onClick="setPresentationState(++tutorialPresentationState)">Next<i class="fa fa-chevron-right" style="margin-left: 1em;"></i></button>';
+                    buttons.querySelectorAll('button').forEach(function(button) {button.style.width = '50%'})
+                    break;
+                case 8:
+                    window.tutorialIsSimulation = false;
+                    clearGIFInterval();
+                    clearMetronomeInterval();
+                    clearCountdownInterval();
+                    pauseAnimation();
+                    clearCueText();
+                    overlay.style.backgroundColor = 'rgba(255, 255, 255, 0.75)';
+                    leftKey.style.visibility = 'visible';
+                    rightKey.style.visibility = 'visible';
+                    leftKey.style.display = 'block';
+                    rightKey.style.display = 'block';
+                    leftText.style.display = 'none';
+                    rightText.style.display = 'none';
+                    metronomeWrapper.classList.remove('for-tutorial');
+                    speedUp.style.display = 'none';
+                    speedDown.style.display = 'none';
+                    text.innerHTML = '<h3>Trying Different BPMs</h3>On the next slide, the simulation will start. Push and let go <strong>for 1 minute</strong>, this time in sync with the metronome. <strong>You will need sound on <i class="fa fa-volume-up" aria-hidden="true"></i>.</strong>';
+                    buttons.innerHTML = '<button onClick="setPresentationState(--tutorialPresentationState)"><i class="fa fa-chevron-left" style="margin-right: 1em;"></i>Back</button><button onClick="setPresentationState(++tutorialPresentationState)">Next<i class="fa fa-chevron-right" style="margin-left: 1em;"></i></button>';
+                    buttons.querySelectorAll('button').forEach(function(button) {button.style.width = '50%'});
+                    break;
+                case 9:
+                    window.tutorialIsSimulation = true;
+                    window.tutorialCurrentScore = 0;
+                    window.tutorialTotalReps = Math.round((window.tutorialBPMState / 60) * simulation2Seconds);
+                    clearCueText();
+                    startMetronomeInterval(true, true);
+                    overlay.style.backgroundColor = 'rgba(255, 255, 255, 0.35)';
+                    leftKey.style.visibility = 'visible';
+                    rightKey.style.visibility = 'visible';
+                    leftKey.style.display = 'block';
+                    rightKey.style.display = 'block';
+                    leftText.style.display = 'block';
+                    rightText.style.display = 'block';
+                    metronomeWrapper.style.display = 'flex';
+                    metronomeWrapper.classList.add('for-tutorial')
+                    buttons.innerHTML = '<button onClick="setPresentationState(--tutorialPresentationState)"><i class="fa fa-chevron-left" style="margin-right: 1em;"></i>Back</button><button onClick="setPresentationState(++tutorialPresentationState)" disabled>Next<i class="fa fa-chevron-right" style="margin-left: 1em;"></i></button>';
+                    buttons.querySelectorAll('button').forEach(function(button) {button.style.width = '50%'})
+                    break;
+                case 10:
+                    window.tutorialIsSimulation = false;
+                    clearCueText();
+                    clearCountdownInterval();
+                    clearMetronomeInterval();
+                    // playAnimation();
+                    leftKey.style.visibility = 'hidden';
+                    rightKey.style.visibility = 'hidden';
+                    overlay.style.backgroundColor = 'rgba(255, 255, 255, 0.75)';
+                    leftKey.style.display = 'none';
+                    rightKey.style.display = 'none';
+                    leftText.style.display = 'none';
+                    rightText.style.display = 'none';
+                    metronomeWrapper.style.display = 'none';
+                    text.innerHTML = '<h3>Thanks For Learning With Us! 🏆</h3>We hope this simulation helped. Before you go, remember you will need a metronome app on your smartphone to set the rate in person. <a href="https://apps.apple.com/us/app/pro-metronome-tempo-beat-subdivision-polyrhythm/id477960671" target="_blank">Click here to view a recommended metronome app</a>.' ;
+                    buttons.innerHTML = '<button onClick="setPresentationState(--tutorialPresentationState)"><i class="fa fa-chevron-left" style="margin-right: 1em;"></i>Back</button>';
+                    buttons.querySelectorAll('button').forEach(function(button) {button.style.width = '100%'})
+                    // startIntervalTutorial();
+                    break;
+                default:
+                    break;
+            }
+        }
+        window.setPresentationState = setPresentationState;
+
+        function howManyMore() {
+            return Math.max(0, window.tutorialTotalReps - window.tutorialCurrentScore)
+        }
+
+        function tallyScore() {
+            if (!window.tutorialIsSimulation) {
+                return;
+            }
+            if (window.tutorialGotScorePush && window.tutorialGotScoreLetGo) {
+                window.tutorialCurrentScore++;
+                text.innerHTML = '<p class="success score-message">Good! ' + howManyMore() + ' More</p>';
+            } else {
+                text.innerHTML = '<p class="error score-message">Missed. ' + howManyMore() + ' More</p>';
+            }
+            if (howManyMore() == 0) {
+                window.setPresentationState(++tutorialPresentationState);
+            }
+            window.setTimeout(clearOverlayText, BPMToInterval(window.tutorialBPMState) / 4);
+            window.tutorialGotScorePush = false;
+            window.tutorialGotScoreLetGo = false;
+        }
+
+        function GIFIntervalHandler(shouldUpdateText, reset) {
+            window.tutorialShouldBePushedState = true;
+            if (shouldUpdateText) {
+                updateText();
+            }
+			if (reset) {
+				resetAnimation();
+			}
+            playAnimation();
+            // switch the text back when the GIF stops
+            window.setTimeout(function() {
+                window.tutorialShouldBePushedState = false;
+                if (shouldUpdateText) {
+                    updateText();
+                    window.setTimeout(tallyScore, GIFAnimationDuration / 2);
+                }
+            }, GIFAnimationDuration / 2);
+        }
+
+        function metronomeIntervalHandler(shouldUpdateText) {
+            sound.play();
+            window.tutorialShouldBePushedState = true;
+            if (shouldUpdateText) {
+                updateText();
+            }
+            // TODO: find a sound that plays immediately, or a way to speed up the sound
+
+            // switch the text back when the GIF stops
+            window.setTimeout(function() {
+                window.tutorialShouldBePushedState = false;
+                if (shouldUpdateText) {
+                    updateText();
+                    window.setTimeout(tallyScore, BPMToInterval(window.tutorialBPMState) / 4);
+                }
+            }, BPMToInterval(window.tutorialBPMState) / 4);
+        }
+
+        function startMetronomeInterval(includeDelay, shouldUpdateText) {
+            clearMetronomeInterval();
+            startCountdownTimer(3);
+            window.metronomeIntervalID = window.setInterval(metronomeIntervalHandler, BPMToInterval(window.tutorialBPMState), true);
+        }
+
+        function clearMetronomeInterval() {
+            if (window.metronomeIntervalID) {
+                window.clearInterval(window.metronomeIntervalID);
+            }
+            window.metronomeIntervalID = null;
+        }
+
+        function startGIFInterval(includeDelay, shouldUpdateText, reset) {
+            clearGIFInterval();
+            resetAnimation();
+            if (includeDelay) {
+                startCountdownTimer(3);
+            } else {
+                GIFIntervalHandler(shouldUpdateText, reset);
+            }
+            window.GIFIntervalID = window.setInterval(GIFIntervalHandler, BPMToInterval(window.tutorialBPMState), shouldUpdateText, reset);
+        }
+
+        function clearGIFInterval() {
+            if (window.GIFIntervalID) {
+                window.clearInterval(window.GIFIntervalID);
+            }
+            window.GIFIntervalID = null;
+        }
+
+        function startCountdownTimer() {
+            window.tutorialCountdownNumber = 3;
+            displayCountdownNumber();
+            window.countdownIntervalID = window.setInterval(decreaseCountdownNumber, BPMToInterval(window.tutorialBPMState) / window.tutorialCountdownNumber);
+        }
+
+        function decreaseCountdownNumber() {
+            window.tutorialCountdownNumber--;
+            displayCountdownNumber();
+            if (window.tutorialCountdownNumber == 0) {
+                clearCountdownInterval();
+                clearOverlayText();
+            }
+        }
+
+        function displayCountdownNumber() {
+            var fontsize = window.tutorialPresentationState == 9 ? '3' : '3.5';
+            text.innerHTML = '<h3 style="font-size: ' + fontsize + 'em; margin-bottom: 0">' + window.tutorialCountdownNumber + '</h3>';
+        }
+        function clearOverlayText() {
+            if (!window.tutorialIsSimulation) {
+                return;
+            }
+            text.innerHTML = '';
+        }
+
+        function clearCountdownInterval() {
+            window.clearInterval(window.countdownIntervalID);
+            window.countdownIntervalID = null;
+        }
+
+        function clearCueText() {
+            leftText.classList.remove('error');
+            leftText.classList.remove('success');
+            rightText.classList.remove('error');
+            rightText.classList.remove('success');
+            leftText.innerHTML = '';
+            rightText.innerHTML = '';   
+        }
+
+        function readyText() {
+            leftText.classList.remove('error');
+            leftText.classList.remove('success');
+            rightText.classList.remove('error');
+            rightText.classList.remove('success');
+            leftText.innerHTML = 'READY?';
+            rightText.innerHTML = 'READY?';
+        }
+
+        function countScore() {
+            if (window.tutorialShouldBePushedState) {
+                if (leftKey.tutorialIsPushed && rightKey.tutorialIsPushed) {
+					if (!window.tutorialGotScorePush) {
+						GIFIntervalHandler(false, true);
+					}
+                    window.tutorialGotScorePush = true;
+					
+                } else {
+                    window.tutorialGotScorePush = false;
+                }
+            } else {
+                if (!leftKey.tutorialIsPushed && !rightKey.tutorialIsPushed) {
+                    window.tutorialGotScoreLetGo = true;
+                } else {
+                    window.tutorialGotScoreLetGo = false;
+                }
+            }
+        }
+
+        function updateText() {
+            if (window.tutorialShouldBePushedState) {
+                if (leftKey.tutorialIsPushed) {
+                    leftText.classList.remove('error');
+                    leftText.classList.add('success');
+                    if (window.isMobile) {
+                        leftText.innerHTML = '';
+                    } else {
+                        leftText.innerHTML = '';
+                    }
+                } else {
+                    leftText.classList.remove('success');
+                    leftText.classList.add('error');
+                    leftText.innerHTML = 'PUSH!';
+                }
+                if (rightKey.tutorialIsPushed) {
+                    rightText.classList.remove('error');
+                    rightText.classList.add('success');
+                    if (window.isMobile) {
+                        rightText.innerHTML = '';
+                    } else {
+                        rightText.innerHTML = '';
+                    }
+                } else {
+                    rightText.classList.remove('success');
+                    rightText.classList.add('error');
+                    rightText.innerHTML = 'PUSH!';;
+                }
+            } else {
+                if (leftKey.tutorialIsPushed) {
+                    leftText.classList.remove('success');
+                    leftText.classList.add('error');
+                    leftText.innerHTML = 'LET GO!';
+                } else {
+                    leftText.classList.remove('error');
+                    leftText.classList.add('success');
+                    if (window.isMobile) {
+                        leftText.innerHTML = '';
+                    } else {
+                        leftText.innerHTML = '';
+                    }
+                }
+                if (rightKey.tutorialIsPushed) {
+                    rightText.classList.remove('success');
+                    rightText.classList.add('error');
+                    rightText.innerHTML = 'LET GO!';
+                } else {
+                    rightText.classList.remove('error');
+                    rightText.classList.add('success');
+                    if (window.isMobile) {
+                        rightText.innerHTML = '';
+                    } else {
+                        rightText.innerHTML = '';
+                    }
+                }
+            }
+        }
+
+        function BPMToSeconds(BPM) {
+            return (60 / BPM);
+        }
+
+        function BPMToInterval(BPM) {
+            return (60000 / BPM);
+        }
+
+        window.document.addEventListener('DOMContentLoaded', function() {
+            window.tutorialPresentationState = 0;
+            setPresentationState(window.tutorialPresentationState);
+        }, false);
+    })(window)
+</script>
