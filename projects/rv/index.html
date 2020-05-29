@@ -227,7 +227,7 @@
             <div class="bottom-buttons-wrapper">
                 <div class="left-key" style="display:none;"></div>
                 <div class="left-text" style="display:none;"></div>
-                <div class="metronome-wrapper">
+                <div class="metronome-wrapper" style="display:none;">
                     <img class="floating-phone" style="height: 145px;" src="./assets/phone_blue_screen.png">
                     <div class="metronome-speed">
                         <div id="sound-on" style="display:none;"><i class="fa fa-volume-up" aria-hidden="true"></i></div>
@@ -871,10 +871,36 @@
             return (60000 / BPM);
         }
 
-        window.document.addEventListener('DOMContentLoaded', function() {
+        // wait til sprite is loaded to start
+        var imageUrl = "./assets/squeeze-sprite.jpg";
+        var preloaderImg = document.createElement("img");
+        preloaderImg.src = imageUrl;
+        text.style.cssText = "position: relative;top: 50%;transform: translateY(-50%);"
+
+        var loadingInterval = window.setInterval(function(e) {
+            if (text.innerHTML === "Loading...") {
+                text.innerHTML = "Loading";
+            } else if (text.innerHTML === "Loading") {
+                text.innerHTML = "Loading.";
+            } else if (text.innerHTML === "Loading.") {
+                text.innerHTML = "Loading..";
+            } else if (text.innerHTML === "Loading..") {
+                text.innerHTML = "Loading...";
+            } 
+        }, 250);
+
+        preloaderImg.addEventListener('load', function(event) {
+        text.style.cssText = null;
+            preloaderImg = null;
+            window.clearInterval(loadingInterval);
             window.tutorialPresentationState = 0;
             setPresentationState(window.tutorialPresentationState);
-        }, false);
+        });
+
+        // window.document.addEventListener('DOMContentLoaded', function() {
+        //     window.tutorialPresentationState = 0;
+        //     setPresentationState(window.tutorialPresentationState);
+        // }, false);
     })(window)
 </script>
 </body>
