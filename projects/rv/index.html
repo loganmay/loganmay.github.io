@@ -425,7 +425,7 @@
                 case 0:
                     window.tutorialBPMState = 12;
                     playAnimation();
-                    startGIFInterval(false, false);
+                    startGIFInterval(false, false, true);
                     overlay.style.justifyContent = 'center';
                     leftKey.style.visibility = 'visible';
                     rightKey.style.visibility = 'visible';
@@ -659,13 +659,15 @@
             window.tutorialGotScoreLetGo = false;
         }
 
-        function GIFIntervalHandler(shouldUpdateText) {
+        function GIFIntervalHandler(shouldUpdateText, shouldPlayAnimation) {
             window.tutorialShouldBePushedState = true;
             if (shouldUpdateText) {
                 updateText();
             }
-            resetAnimation();
-            playAnimation();
+            if (shouldPlayAnimation) {
+                resetAnimation();
+                playAnimation();
+            }
             // switch the text back when the GIF stops
             window.setTimeout(function() {
                 window.tutorialShouldBePushedState = false;
@@ -707,15 +709,23 @@
             window.metronomeIntervalID = null;
         }
 
-        function startGIFInterval(includeDelay, shouldUpdateText) {
+        function prepareGIFForInterval(includeDelay) {
+            clearGIFInterval();
+            resetAnimation();
+            if (includeDelay) {
+                startCountdownTimer(3);
+            }
+        }
+
+        function startGIFInterval(includeDelay, shouldUpdateText, shouldPlayAnimation) {
             clearGIFInterval();
             resetAnimation();
             if (includeDelay) {
                 startCountdownTimer(3);
             } else {
-                GIFIntervalHandler(shouldUpdateText);
+                GIFIntervalHandler(shouldUpdateText, shouldPlayAnimation);
             }
-            window.GIFIntervalID = window.setInterval(GIFIntervalHandler, BPMToInterval(window.tutorialBPMState), shouldUpdateText);
+            window.GIFIntervalID = window.setInterval(GIFIntervalHandler, BPMToInterval(window.tutorialBPMState), shouldUpdateText, shouldPlayAnimation);
         }
 
         function clearGIFInterval() {
@@ -777,6 +787,11 @@
         function countScore() {
             if (window.tutorialShouldBePushedState) {
                 if (leftKey.tutorialIsPushed && rightKey.tutorialIsPushed) {
+                    if (!window.tutorialGotScorePush) {
+						// GIFIntervalHandler(false, true);
+                        resetAnimation();
+                        playAnimation();
+					}
                     window.tutorialGotScorePush = true;
                 } else {
                     window.tutorialGotScorePush = false;
